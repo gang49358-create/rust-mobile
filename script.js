@@ -55,6 +55,7 @@ function addToCart(name, price) {
     });
 
     updateCart();
+renderOrders();
 
     openCart();
 
