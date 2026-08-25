@@ -8,9 +8,7 @@
    GOOGLE APPS SCRIPT
 ========================================= */
 
-const TELEGRAM_API =
-    "https://script.google.com/macros/s/AKfycbxJyvekI9LWKhueYWzeQB8j5NMslqbdOYChwpIiH0w5hF6_l9Hyz2nBTsU8axJpNStwgw/exec";
-
+const SELLER_USERNAME = "luxanixx";
 
 /* =========================================
    PRODUCTS
