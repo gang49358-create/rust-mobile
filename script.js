@@ -1,5 +1,5 @@
 /* =========================================
-   TELEGRAM GOOGLE APPS SCRIPT
+   TELEGRAM / GOOGLE APPS SCRIPT
 ========================================= */
 
 const TELEGRAM_API =
@@ -79,7 +79,6 @@ const products = {
 
     ],
 
-
     battlepass: [
 
         {
@@ -90,7 +89,6 @@ const products = {
         }
 
     ],
-
 
     promotions: [
 
@@ -114,17 +112,29 @@ const products = {
 
 
 /* =========================================
-   КОРЗИНА
+   CART
 ========================================= */
 
-let cart =
-    JSON.parse(
+let cart = [];
+
+try {
+    cart = JSON.parse(
         localStorage.getItem("rustCart") || "[]"
     );
 
+    if (!Array.isArray(cart)) {
+        cart = [];
+    }
+
+} catch (error) {
+
+    cart = [];
+
+}
+
 
 /* =========================================
-   ЗАПУСК
+   START
 ========================================= */
 
 document.addEventListener(
@@ -150,14 +160,18 @@ document.addEventListener(
 
 
 /* =========================================
-   КАТЕГОРИИ
+   CATEGORY
 ========================================= */
 
 function showCategory(category, button) {
 
+    if (!products[category]) {
+        return;
+    }
+
     document
         .querySelectorAll(".category")
-        .forEach(item => {
+        .forEach(function (item) {
 
             item.classList.remove("active");
 
@@ -165,9 +179,7 @@ function showCategory(category, button) {
 
 
     if (button) {
-
         button.classList.add("active");
-
     }
 
 
@@ -176,23 +188,14 @@ function showCategory(category, button) {
 
 
     if (!container) {
-
         return;
-
     }
 
 
     container.innerHTML = "";
 
 
-    if (!products[category]) {
-
-        return;
-
-    }
-
-
-    products[category].forEach(product => {
+    products[category].forEach(function (product) {
 
         container.innerHTML +=
             createProductHTML(product);
@@ -203,7 +206,7 @@ function showCategory(category, button) {
 
 
 /* =========================================
-   HTML ТОВАРА
+   PRODUCT HTML
 ========================================= */
 
 function createProductHTML(product) {
@@ -216,32 +219,21 @@ function createProductHTML(product) {
 
                 <div class="product-coins">
 
-                    <div class="mini-coin">
-                        ✦
-                    </div>
-
-                    <div class="mini-coin">
-                        ✦
-                    </div>
-
-                    <div class="mini-coin">
-                        ✦
-                    </div>
+                    <div class="mini-coin">✦</div>
+                    <div class="mini-coin">✦</div>
+                    <div class="mini-coin">✦</div>
 
                 </div>
 
             </div>
 
-
             <h3>
                 ${escapeHTML(product.name)}
             </h3>
 
-
             <div class="product-description">
                 ${escapeHTML(product.description)}
             </div>
-
 
             <div class="product-bottom">
 
@@ -249,8 +241,8 @@ function createProductHTML(product) {
                     ${formatPrice(product.price)} ₽
                 </div>
 
-
                 <button
+                    type="button"
                     onclick="addToCart('${product.id}')"
                 >
                     🛒 Купить
@@ -266,7 +258,7 @@ function createProductHTML(product) {
 
 
 /* =========================================
-   ПОИСК ТОВАРА
+   FIND PRODUCT
 ========================================= */
 
 function findProduct(id) {
@@ -274,19 +266,18 @@ function findProduct(id) {
     for (const category in products) {
 
         const product =
-            products[category].find(
-                item => item.id === id
-            );
+            products[category].find(function (item) {
+
+                return item.id === id;
+
+            });
 
 
         if (product) {
-
             return product;
-
         }
 
     }
-
 
     return null;
 
@@ -294,7 +285,7 @@ function findProduct(id) {
 
 
 /* =========================================
-   ДОБАВИТЬ В КОРЗИНУ
+   ADD TO CART
 ========================================= */
 
 function addToCart(id) {
@@ -332,7 +323,7 @@ function addToCart(id) {
 
 
 /* =========================================
-   УДАЛИТЬ ИЗ КОРЗИНЫ
+   REMOVE FROM CART
 ========================================= */
 
 function removeFromCart(index) {
@@ -341,9 +332,7 @@ function removeFromCart(index) {
         index < 0 ||
         index >= cart.length
     ) {
-
         return;
-
     }
 
 
@@ -359,7 +348,7 @@ function removeFromCart(index) {
 
 
 /* =========================================
-   СОХРАНИТЬ КОРЗИНУ
+   SAVE CART
 ========================================= */
 
 function saveCart() {
@@ -373,15 +362,13 @@ function saveCart() {
 
 
 /* =========================================
-   СЧЁТЧИК КОРЗИНЫ
+   UPDATE CART
 ========================================= */
 
 function updateCart() {
 
     const count =
-        document.getElementById(
-            "cartCount"
-        );
+        document.getElementById("cartCount");
 
 
     if (count) {
@@ -395,7 +382,7 @@ function updateCart() {
 
 
 /* =========================================
-   ОТКРЫТЬ КОРЗИНУ
+   OPEN CART
 ========================================= */
 
 function openCart() {
@@ -408,27 +395,21 @@ function openCart() {
 
 
 /* =========================================
-   КОРЗИНА
+   RENDER CART
 ========================================= */
 
 function renderCart() {
 
     const container =
-        document.getElementById(
-            "cartItems"
-        );
+        document.getElementById("cartItems");
 
 
     const totalElement =
-        document.getElementById(
-            "cartTotal"
-        );
+        document.getElementById("cartTotal");
 
 
-    if (!container || !totalElement) {
-
+    if (!container) {
         return;
-
     }
 
 
@@ -449,9 +430,9 @@ function renderCart() {
         `;
 
 
-        totalElement.textContent =
-            "0 ₽";
-
+        if (totalElement) {
+            totalElement.textContent = "0 ₽";
+        }
 
         return;
 
@@ -464,60 +445,63 @@ function renderCart() {
     let total = 0;
 
 
-    cart.forEach(
-        (item, index) => {
+    cart.forEach(function (item, index) {
 
-            total +=
-                Number(item.price) || 0;
+        total += Number(item.price) || 0;
 
 
-            container.innerHTML += `
+        container.innerHTML += `
 
-                <div class="cart-item">
+            <div class="cart-item">
 
-                    <div class="cart-item-info">
+                <div class="cart-item-info">
 
-                        <strong>
-                            ${escapeHTML(item.name)}
-                        </strong>
+                    <strong>
+                        ${escapeHTML(item.name)}
+                    </strong>
 
-                        <span>
-                            ${formatPrice(item.price)} ₽
-                        </span>
-
-                    </div>
-
-
-                    <button
-                        class="cart-remove"
-                        onclick="removeFromCart(${index})"
-                    >
-                        🗑
-                    </button>
+                    <span>
+                        ${formatPrice(item.price)} ₽
+                    </span>
 
                 </div>
 
-            `;
+                <button
+                    type="button"
+                    class="cart-remove"
+                    onclick="removeFromCart(${index})"
+                >
+                    🗑
+                </button>
 
-        }
-    );
+            </div>
+
+        `;
+
+    });
 
 
-    totalElement.textContent =
-        formatPrice(total) + " ₽";
+    if (totalElement) {
+
+        totalElement.textContent =
+            formatPrice(total) + " ₽";
+
+    }
 
 }
 
 
 /* =========================================
-   ОФОРМЛЕНИЕ ЗАКАЗА
+   CHECKOUT
 ========================================= */
 
 function checkout() {
 
     if (!cart.length) {
 
-        showToast("Корзина пустая");
+        showToast(
+            "Корзина пустая"
+        );
 
         return;
 
@@ -536,7 +520,7 @@ function checkout() {
         );
 
 
-    if (playerInput && savedId) {
+    if (savedId && playerInput) {
 
         playerInput.value =
             savedId;
@@ -548,22 +532,21 @@ function checkout() {
         generateOrderNumber();
 
 
-    const orderNumberElement =
+    const orderElement =
         document.getElementById(
             "orderNumber"
         );
 
 
-    if (orderNumberElement) {
+    if (orderElement) {
 
-        orderNumberElement.textContent =
+        orderElement.textContent =
             orderNumber;
 
     }
 
 
     renderCheckoutItems();
-
 
     closeModal("cartModal");
 
@@ -573,13 +556,12 @@ function checkout() {
 
 
 /* =========================================
-   НОМЕР ЗАКАЗА
+   ORDER NUMBER
 ========================================= */
 
 function generateOrderNumber() {
 
-    const now =
-        new Date();
+    const now = new Date();
 
 
     const year =
@@ -598,10 +580,22 @@ function generateOrderNumber() {
         ).padStart(2, "0");
 
 
+    const hours =
+        String(
+            now.getHours()
+        ).padStart(2, "0");
+
+
+    const minutes =
+        String(
+            now.getMinutes()
+        ).padStart(2, "0");
+
+
     const random =
         Math.floor(
-            100000 +
-            Math.random() * 900000
+            1000 +
+            Math.random() * 9000
         );
 
 
@@ -611,6 +605,9 @@ function generateOrderNumber() {
         month +
         day +
         "-" +
+        hours +
+        minutes +
+        "-" +
         random
     );
 
@@ -618,7 +615,7 @@ function generateOrderNumber() {
 
 
 /* =========================================
-   ТОВАРЫ В ОФОРМЛЕНИИ
+   CHECKOUT ITEMS
 ========================================= */
 
 function renderCheckoutItems() {
@@ -635,10 +632,8 @@ function renderCheckoutItems() {
         );
 
 
-    if (!container || !totalElement) {
-
+    if (!container) {
         return;
-
     }
 
 
@@ -648,7 +643,7 @@ function renderCheckoutItems() {
     let total = 0;
 
 
-    cart.forEach(item => {
+    cart.forEach(function (item) {
 
         total +=
             Number(item.price) || 0;
@@ -659,11 +654,15 @@ function renderCheckoutItems() {
             <div class="checkout-item">
 
                 <span class="checkout-item-name">
+
                     ${escapeHTML(item.name)}
+
                 </span>
 
                 <span class="checkout-item-price">
+
                     ${formatPrice(item.price)} ₽
+
                 </span>
 
             </div>
@@ -673,14 +672,18 @@ function renderCheckoutItems() {
     });
 
 
-    totalElement.textContent =
-        formatPrice(total) + " ₽";
+    if (totalElement) {
+
+        totalElement.textContent =
+            formatPrice(total) + " ₽";
+
+    }
 
 }
 
 
 /* =========================================
-   СОЗДАНИЕ ЗАКАЗА
+   CREATE ORDER
 ========================================= */
 
 function createOrder() {
@@ -703,21 +706,16 @@ function createOrder() {
         );
 
 
-    const orderNumberElement =
+    const orderElement =
         document.getElementById(
             "orderNumber"
         );
 
 
-    if (
-        !playerInput ||
-        !paymentInput ||
-        !agreementInput ||
-        !orderNumberElement
-    ) {
+    if (!playerInput) {
 
         showToast(
-            "Ошибка формы заказа"
+            "Поле игрового ID не найдено"
         );
 
         return;
@@ -730,15 +728,21 @@ function createOrder() {
 
 
     const paymentMethod =
-        paymentInput.value;
+        paymentInput
+            ? paymentInput.value
+            : "Не указан";
 
 
     const agreement =
-        agreementInput.checked;
+        agreementInput
+            ? agreementInput.checked
+            : true;
 
 
     const orderNumber =
-        orderNumberElement.textContent;
+        orderElement
+            ? orderElement.textContent.trim()
+            : generateOrderNumber();
 
 
     if (!playerId) {
@@ -763,10 +767,21 @@ function createOrder() {
     }
 
 
+    if (!cart.length) {
+
+        showToast(
+            "Корзина пустая"
+        );
+
+        return;
+
+    }
+
+
     let total = 0;
 
 
-    cart.forEach(item => {
+    cart.forEach(function (item) {
 
         total +=
             Number(item.price) || 0;
@@ -791,24 +806,38 @@ function createOrder() {
     };
 
 
-    const paymentName =
-        paymentNames[paymentMethod] ||
-        paymentMethod ||
-        "Не указан";
+    const readablePayment =
+        paymentNames[paymentMethod]
+        || paymentMethod
+        || "Не указан";
 
 
     const order = {
 
         id: orderNumber,
 
+        orderNumber: orderNumber,
+
         playerId: playerId,
 
-        items: [...cart],
+        items: cart.map(function (item) {
+
+            return {
+
+                id: item.id,
+
+                name: item.name,
+
+                price: Number(item.price) || 0
+
+            };
+
+        }),
 
         total: total,
 
         paymentMethod:
-            paymentName,
+            readablePayment,
 
         status: "Новый",
 
@@ -818,12 +847,26 @@ function createOrder() {
     };
 
 
-    let orders =
-        JSON.parse(
+    let orders = [];
+
+
+    try {
+
+        orders = JSON.parse(
             localStorage.getItem(
                 "rustOrders"
             ) || "[]"
         );
+
+        if (!Array.isArray(orders)) {
+            orders = [];
+        }
+
+    } catch (error) {
+
+        orders = [];
+
+    }
 
 
     orders.unshift(order);
@@ -835,37 +878,58 @@ function createOrder() {
     );
 
 
-    /*
-       Показываем успех сразу.
-       Отправка в Telegram идёт отдельно.
-    */
-
-    document
-        .getElementById(
+    const successOrderNumber =
+        document.getElementById(
             "successOrderNumber"
-        )
-        .textContent =
+        );
+
+
+    const successPlayerId =
+        document.getElementById(
+            "successPlayerId"
+        );
+
+
+    const successTotal =
+        document.getElementById(
+            "successTotal"
+        );
+
+
+    if (successOrderNumber) {
+
+        successOrderNumber.textContent =
             orderNumber;
 
+    }
 
-    document
-        .getElementById(
-            "successPlayerId"
-        )
-        .textContent =
+
+    if (successPlayerId) {
+
+        successPlayerId.textContent =
             playerId;
 
+    }
 
-    document
-        .getElementById(
-            "successTotal"
-        )
-        .textContent =
+
+    if (successTotal) {
+
+        successTotal.textContent =
             formatPrice(total) + " ₽";
 
+    }
+
+
+    /*
+        Отправляем заказ в Google Apps Script.
+    */
 
     sendOrderToTelegram(order);
 
+
+    /*
+        Очищаем корзину.
+    */
 
     cart = [];
 
@@ -878,15 +942,20 @@ function createOrder() {
     updateProfile();
 
 
-    closeModal("checkoutModal");
+    closeModal(
+        "checkoutModal"
+    );
 
-    openModal("successModal");
+
+    openModal(
+        "successModal"
+    );
 
 }
 
 
 /* =========================================
-   ОТПРАВКА ЗАКАЗА В TELEGRAM
+   SEND ORDER TO TELEGRAM
 ========================================= */
 
 function sendOrderToTelegram(order) {
@@ -904,7 +973,7 @@ function sendOrderToTelegram(order) {
 
     const items =
         order.items
-            .map(item => {
+            .map(function (item) {
 
                 return (
                     item.name +
@@ -920,7 +989,7 @@ function sendOrderToTelegram(order) {
     const payload = {
 
         orderNumber:
-            order.id,
+            order.orderNumber,
 
         playerId:
             order.playerId,
@@ -937,6 +1006,11 @@ function sendOrderToTelegram(order) {
     };
 
 
+    /*
+        Google Apps Script Web App
+        принимает POST-запрос.
+    */
+
     fetch(
         TELEGRAM_API,
         {
@@ -946,8 +1020,10 @@ function sendOrderToTelegram(order) {
             mode: "no-cors",
 
             headers: {
+
                 "Content-Type":
                     "text/plain;charset=utf-8"
+
             },
 
             body:
@@ -955,14 +1031,14 @@ function sendOrderToTelegram(order) {
 
         }
     )
-    .then(() => {
+    .then(function () {
 
         console.log(
             "Запрос заказа отправлен"
         );
 
     })
-    .catch(error => {
+    .catch(function (error) {
 
         console.error(
             "Ошибка отправки заказа:",
@@ -975,7 +1051,7 @@ function sendOrderToTelegram(order) {
 
 
 /* =========================================
-   ЗАКАЗЫ
+   ORDERS
 ========================================= */
 
 function renderOrders() {
@@ -987,18 +1063,31 @@ function renderOrders() {
 
 
     if (!container) {
-
         return;
-
     }
 
 
-    const orders =
-        JSON.parse(
+    let orders = [];
+
+
+    try {
+
+        orders = JSON.parse(
             localStorage.getItem(
                 "rustOrders"
             ) || "[]"
         );
+
+
+        if (!Array.isArray(orders)) {
+            orders = [];
+        }
+
+    } catch (error) {
+
+        orders = [];
+
+    }
 
 
     if (!orders.length) {
@@ -1025,13 +1114,13 @@ function renderOrders() {
     container.innerHTML = "";
 
 
-    orders.forEach(order => {
+    orders.forEach(function (order) {
 
         const date =
-            new Date(order.date)
-                .toLocaleString(
-                    "ru-RU"
-                );
+            order.date
+                ? new Date(order.date)
+                    .toLocaleString("ru-RU")
+                : "—";
 
 
         container.innerHTML += `
@@ -1041,11 +1130,22 @@ function renderOrders() {
                 <div class="order-history-top">
 
                     <span class="order-history-number">
-                        ${escapeHTML(order.id)}
+
+                        ${escapeHTML(
+                            order.orderNumber ||
+                            order.id ||
+                            "—"
+                        )}
+
                     </span>
 
                     <span class="order-history-status">
-                        ${escapeHTML(order.status)}
+
+                        ${escapeHTML(
+                            order.status ||
+                            "Новый"
+                        )}
+
                     </span>
 
                 </div>
@@ -1054,17 +1154,23 @@ function renderOrders() {
                 <div class="order-history-info">
 
                     🎮 ID:
-                    ${escapeHTML(order.playerId)}
+                    ${escapeHTML(
+                        order.playerId || "—"
+                    )}
 
                     <br>
 
                     💰 Сумма:
-                    ${formatPrice(order.total)} ₽
+                    ${formatPrice(
+                        order.total || 0
+                    )} ₽
 
                     <br>
 
                     💳 Оплата:
-                    ${escapeHTML(order.paymentMethod)}
+                    ${escapeHTML(
+                        order.paymentMethod || "—"
+                    )}
 
                     <br>
 
@@ -1082,7 +1188,7 @@ function renderOrders() {
 
 
 /* =========================================
-   ПРОФИЛЬ
+   PROFILE
 ========================================= */
 
 function updateProfile() {
@@ -1093,18 +1199,33 @@ function updateProfile() {
         ) || "Не указан";
 
 
-    const orders =
-        JSON.parse(
+    let orders = [];
+
+
+    try {
+
+        orders = JSON.parse(
             localStorage.getItem(
                 "rustOrders"
             ) || "[]"
         );
 
 
+        if (!Array.isArray(orders)) {
+            orders = [];
+        }
+
+    } catch (error) {
+
+        orders = [];
+
+    }
+
+
     let spent = 0;
 
 
-    orders.forEach(order => {
+    orders.forEach(function (order) {
 
         spent +=
             Number(order.total) || 0;
@@ -1157,46 +1278,54 @@ function updateProfile() {
 
 
 /* =========================================
-   ПРОФИЛЬ
+   PROFILE
 ========================================= */
 
 function openProfile() {
 
     updateProfile();
 
-    openModal("profileModal");
+    openModal(
+        "profileModal"
+    );
 
 }
 
 
 /* =========================================
-   ЗАКАЗЫ
+   ORDERS
 ========================================= */
 
 function openOrders() {
 
     renderOrders();
 
-    closeModal("profileModal");
+    closeModal(
+        "profileModal"
+    );
 
-    openModal("ordersModal");
+    openModal(
+        "ordersModal"
+    );
 
 }
 
 
 /* =========================================
-   ПОДДЕРЖКА
+   SUPPORT
 ========================================= */
 
 function openSupport() {
 
-    openModal("supportModal");
+    openModal(
+        "supportModal"
+    );
 
 }
 
 
 /* =========================================
-   МОДАЛЬНОЕ ОКНО
+   MODALS
 ========================================= */
 
 function openModal(id) {
@@ -1206,9 +1335,7 @@ function openModal(id) {
 
 
     if (!modal) {
-
         return;
-
     }
 
 
@@ -1227,9 +1354,7 @@ function closeModal(id) {
 
 
     if (!modal) {
-
         return;
-
     }
 
 
@@ -1242,17 +1367,17 @@ function closeModal(id) {
 
 
 /* =========================================
-   ЗАКРЫТИЕ ПО ФОНУ
+   CLICK OUTSIDE
 ========================================= */
 
 document.addEventListener(
     "click",
-    function(event) {
+    function (event) {
 
         if (
-            event.target.classList.contains(
-                "modal"
-            )
+            event.target &&
+            event.target.classList &&
+            event.target.classList.contains("modal")
         ) {
 
             event.target.classList.remove(
@@ -1274,36 +1399,33 @@ document.addEventListener(
 
 document.addEventListener(
     "keydown",
-    function(event) {
+    function (event) {
 
-        if (
-            event.key === "Escape"
-        ) {
-
-            document
-                .querySelectorAll(
-                    ".modal.open"
-                )
-                .forEach(modal => {
-
-                    modal.classList.remove(
-                        "open"
-                    );
-
-                });
-
-
-            document.body.style.overflow =
-                "";
-
+        if (event.key !== "Escape") {
+            return;
         }
+
+
+        document
+            .querySelectorAll(".modal.open")
+            .forEach(function (modal) {
+
+                modal.classList.remove(
+                    "open"
+                );
+
+            });
+
+
+        document.body.style.overflow =
+            "";
 
     }
 );
 
 
 /* =========================================
-   КОПИРОВАНИЕ НОМЕРА
+   COPY ORDER NUMBER
 ========================================= */
 
 function copyOrderNumber() {
@@ -1315,20 +1437,22 @@ function copyOrderNumber() {
 
 
     if (!element) {
-
         return;
-
     }
 
 
     const number =
-        element.textContent;
+        element.textContent.trim();
 
 
     copyText(number);
 
 }
 
+
+/* =========================================
+   COPY SUCCESS ORDER
+========================================= */
 
 function copySuccessOrder() {
 
@@ -1339,14 +1463,12 @@ function copySuccessOrder() {
 
 
     if (!element) {
-
         return;
-
     }
 
 
     const number =
-        element.textContent;
+        element.textContent.trim();
 
 
     copyText(number);
@@ -1354,39 +1476,101 @@ function copySuccessOrder() {
 }
 
 
+/* =========================================
+   COPY TEXT
+========================================= */
+
 function copyText(text) {
 
     if (
         navigator.clipboard &&
-        navigator.clipboard.writeText
+        window.isSecureContext
     ) {
 
         navigator.clipboard
             .writeText(text)
-            .then(() => {
+            .then(function () {
 
                 showToast(
                     "Номер заказа скопирован"
                 );
 
             })
-            .catch(() => {
+            .catch(function () {
 
-                showToast(text);
+                fallbackCopy(text);
 
             });
 
-    } else {
-
-        showToast(text);
+        return;
 
     }
+
+
+    fallbackCopy(text);
 
 }
 
 
 /* =========================================
-   ПРОКРУТКА
+   FALLBACK COPY
+========================================= */
+
+function fallbackCopy(text) {
+
+    const textarea =
+        document.createElement(
+            "textarea"
+        );
+
+
+    textarea.value =
+        text;
+
+
+    textarea.style.position =
+        "fixed";
+
+    textarea.style.opacity =
+        "0";
+
+
+    document.body.appendChild(
+        textarea
+    );
+
+
+    textarea.select();
+
+
+    try {
+
+        document.execCommand(
+            "copy"
+        );
+
+        showToast(
+            "Номер заказа скопирован"
+        );
+
+    } catch (error) {
+
+        showToast(
+            "Не удалось скопировать"
+        );
+
+    }
+
+
+    document.body.removeChild(
+        textarea
+    );
+
+}
+
+
+/* =========================================
+   SCROLL
 ========================================= */
 
 function scrollToSection(id) {
@@ -1396,9 +1580,7 @@ function scrollToSection(id) {
 
 
     if (!element) {
-
         return;
-
     }
 
 
@@ -1410,19 +1592,19 @@ function scrollToSection(id) {
 
 
 /* =========================================
-   ФОРМАТ ЦЕНЫ
+   FORMAT PRICE
 ========================================= */
 
 function formatPrice(price) {
 
-    return Number(price)
+    return Number(price || 0)
         .toLocaleString("ru-RU");
 
 }
 
 
 /* =========================================
-   ЭКРАНИРОВАНИЕ HTML
+   ESCAPE HTML
 ========================================= */
 
 function escapeHTML(value) {
@@ -1438,7 +1620,7 @@ function escapeHTML(value) {
 
 
 /* =========================================
-   УВЕДОМЛЕНИЕ
+   TOAST
 ========================================= */
 
 function showToast(message) {
@@ -1450,9 +1632,7 @@ function showToast(message) {
 
 
     if (old) {
-
         old.remove();
-
     }
 
 
@@ -1475,7 +1655,7 @@ function showToast(message) {
     );
 
 
-    setTimeout(() => {
+    setTimeout(function () {
 
         toast.classList.add(
             "show"
@@ -1484,19 +1664,17 @@ function showToast(message) {
     }, 10);
 
 
-    setTimeout(() => {
+    setTimeout(function () {
 
         toast.classList.remove(
             "show"
         );
 
 
-        setTimeout(() => {
+        setTimeout(function () {
 
             if (toast.parentNode) {
-
                 toast.remove();
-
             }
 
         }, 250);
