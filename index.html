@@ -12,25 +12,41 @@
 <body>
 
 <header class="header">
+
     <div class="logo">
-        ⚡ RUST MOBILE
+        ⚡ RUST MOBILE SHOP
     </div>
 
-    <div class="header-right">
-        <span>🇨🇳 Китай</span>
-        <button class="cart-button" onclick="openCart()">
-            🛒 <span id="cartCount">0</span>
+    <div class="header-actions">
+
+        <button class="header-button" onclick="openProfile()">
+            👤
         </button>
+
+        <button class="header-button" onclick="openSupport()">
+            💬
+        </button>
+
+        <button class="cart-button" onclick="openCart()">
+            🛒
+            <span id="cartCount">0</span>
+        </button>
+
     </div>
+
 </header>
 
 
+<!-- HERO -->
+
 <section class="hero">
+
+    <div class="hero-bg"></div>
 
     <div class="hero-content">
 
-        <div class="badge">
-            🇨🇳 Официальный донат
+        <div class="country">
+            🇨🇳 КИТАЙСКИЙ RUST MOBILE
         </div>
 
         <h1>
@@ -39,12 +55,15 @@
         </h1>
 
         <p>
-            Быстрая покупка доната для китайского Rust Mobile
+            Пополнение монет и покупка Battle Pass
         </p>
 
-        <a href="#shop" class="hero-button">
-            Купить донат
-        </a>
+        <button
+            class="hero-button"
+            onclick="scrollToShop()"
+        >
+            🛒 Купить донат
+        </button>
 
     </div>
 
@@ -53,30 +72,46 @@
 
 <main id="shop">
 
-    <div class="section-title">
-        <span>🛒</span>
+    <!-- КАТЕГОРИИ -->
+
+    <div class="section-header">
+
+        <div class="section-icon">
+            🛒
+        </div>
+
         <div>
             <h2>Магазин</h2>
-            <p>Выберите нужный раздел</p>
+            <p>Выбери категорию доната</p>
         </div>
+
     </div>
 
 
     <div class="categories">
 
-        <button class="category active" onclick="showCategory('coins', this)">
-            🪙
-            <span>Монеты</span>
+        <button
+            class="category active"
+            onclick="showCategory('coins', this)"
+        >
+            <span>🪙</span>
+            Монеты
         </button>
 
-        <button class="category" onclick="showCategory('battlepass', this)">
-            🏅
-            <span>Battle Pass</span>
+        <button
+            class="category"
+            onclick="showCategory('battlepass', this)"
+        >
+            <span>🏅</span>
+            Battle Pass
         </button>
 
-        <button class="category" onclick="showCategory('sales', this)">
-            🔥
-            <span>Акции</span>
+        <button
+            class="category"
+            onclick="showCategory('sales', this)"
+        >
+            <span>🔥</span>
+            Акции
         </button>
 
     </div>
@@ -84,119 +119,334 @@
 
     <!-- МОНЕТЫ -->
 
-    <section id="coins" class="products-section">
+    <section
+        id="coins"
+        class="products-section"
+    >
 
         <div class="products-grid">
 
+
             <div class="product">
-                <div class="coin-image">🪙</div>
-                <h3>320 монет</h3>
-                <p class="bonus">+20 бонусных</p>
-                <div class="price">520 ₽</div>
-                <button onclick="addToCart('320 монет', 520)">
-                    Купить
-                </button>
+
+                <div class="coin-art">
+                    <div class="coin">
+                        ⚛
+                    </div>
+                </div>
+
+                <div class="product-info">
+
+                    <h3>320 монет</h3>
+
+                    <div class="game-bonus">
+                        300 + 20 бонус
+                    </div>
+
+                    <div class="product-bottom">
+
+                        <strong>
+                            520 ₽
+                        </strong>
+
+                        <button
+                            onclick="addToCart('320 монет', 520)"
+                        >
+                            Купить
+                        </button>
+
+                    </div>
+
+                </div>
+
             </div>
 
 
             <div class="product">
-                <div class="coin-image">🪙</div>
-                <h3>740 монет</h3>
-                <p class="bonus">+60 бонусных</p>
-                <div class="price">1 190 ₽</div>
-                <button onclick="addToCart('740 монет', 1190)">
-                    Купить
-                </button>
+
+                <div class="coin-art">
+                    <div class="coin">
+                        ⚛
+                    </div>
+                </div>
+
+                <div class="product-info">
+
+                    <h3>740 монет</h3>
+
+                    <div class="game-bonus">
+                        680 + 60 бонус
+                    </div>
+
+                    <div class="product-bottom">
+
+                        <strong>
+                            1 190 ₽
+                        </strong>
+
+                        <button
+                            onclick="addToCart('740 монет', 1190)"
+                        >
+                            Купить
+                        </button>
+
+                    </div>
+
+                </div>
+
             </div>
 
 
             <div class="product">
-                <div class="coin-image">🪙</div>
-                <h3>1060 монет</h3>
-                <p class="bonus">+80 бонусных</p>
-                <div class="price">1 700 ₽</div>
-                <button onclick="addToCart('1060 монет', 1700)">
-                    Купить
-                </button>
+
+                <div class="coin-art">
+                    <div class="coin">
+                        ⚛
+                    </div>
+                </div>
+
+                <div class="product-info">
+
+                    <h3>1060 монет</h3>
+
+                    <div class="game-bonus">
+                        980 + 80 бонус
+                    </div>
+
+                    <div class="product-bottom">
+
+                        <strong>
+                            1 700 ₽
+                        </strong>
+
+                        <button
+                            onclick="addToCart('1060 монет', 1700)"
+                        >
+                            Купить
+                        </button>
+
+                    </div>
+
+                </div>
+
             </div>
 
 
             <div class="product">
-                <div class="coin-image">🪙</div>
-                <h3>1400 монет</h3>
-                <p class="bonus">+120 бонусных</p>
-                <div class="price">2 240 ₽</div>
-                <button onclick="addToCart('1400 монет', 2240)">
-                    Купить
-                </button>
+
+                <div class="coin-art">
+                    <div class="coin">
+                        ⚛
+                    </div>
+                </div>
+
+                <div class="product-info">
+
+                    <h3>1400 монет</h3>
+
+                    <div class="game-bonus">
+                        1280 + 120 бонус
+                    </div>
+
+                    <div class="product-bottom">
+
+                        <strong>
+                            2 240 ₽
+                        </strong>
+
+                        <button
+                            onclick="addToCart('1400 монет', 2240)"
+                        >
+                            Купить
+                        </button>
+
+                    </div>
+
+                </div>
+
             </div>
 
 
             <div class="product">
-                <div class="coin-image">🪙</div>
-                <h3>1720 монет</h3>
-                <p class="bonus">+160 бонусных</p>
-                <div class="price">2 740 ₽</div>
-                <button onclick="addToCart('1720 монет', 2740)">
-                    Купить
-                </button>
+
+                <div class="coin-art">
+                    <div class="coin">
+                        ⚛
+                    </div>
+                </div>
+
+                <div class="product-info">
+
+                    <h3>1720 монет</h3>
+
+                    <div class="game-bonus">
+                        1560 + 160 бонус
+                    </div>
+
+                    <div class="product-bottom">
+
+                        <strong>
+                            2 740 ₽
+                        </strong>
+
+                        <button
+                            onclick="addToCart('1720 монет', 2740)"
+                        >
+                            Купить
+                        </button>
+
+                    </div>
+
+                </div>
+
             </div>
 
 
             <div class="product">
-                <div class="coin-image">🪙</div>
-                <h3>2140 монет</h3>
-                <p class="bonus">+180 бонусных</p>
-                <div class="price">3 390 ₽</div>
-                <button onclick="addToCart('2140 монет', 3390)">
-                    Купить
-                </button>
+
+                <div class="coin-art">
+                    <div class="coin">
+                        ⚛
+                    </div>
+                </div>
+
+                <div class="product-info">
+
+                    <h3>2140 монет</h3>
+
+                    <div class="game-bonus">
+                        1960 + 180 бонус
+                    </div>
+
+                    <div class="product-bottom">
+
+                        <strong>
+                            3 390 ₽
+                        </strong>
+
+                        <button
+                            onclick="addToCart('2140 монет', 3390)"
+                        >
+                            Купить
+                        </button>
+
+                    </div>
+
+                </div>
+
             </div>
 
 
             <div class="product">
-                <div class="coin-image">🪙</div>
-                <h3>2880 монет</h3>
-                <p class="bonus">+240 бонусных</p>
-                <div class="price">4 520 ₽</div>
-                <button onclick="addToCart('2880 монет', 4520)">
-                    Купить
-                </button>
+
+                <div class="coin-art">
+                    <div class="coin">
+                        ⚛
+                    </div>
+                </div>
+
+                <div class="product-info">
+
+                    <h3>2880 монет</h3>
+
+                    <div class="game-bonus">
+                        2640 + 240 бонус
+                    </div>
+
+                    <div class="product-bottom">
+
+                        <strong>
+                            4 520 ₽
+                        </strong>
+
+                        <button
+                            onclick="addToCart('2880 монет', 4520)"
+                        >
+                            Купить
+                        </button>
+
+                    </div>
+
+                </div>
+
             </div>
 
 
             <div class="product">
-                <div class="coin-image">🪙</div>
-                <h3>3680 монет</h3>
-                <p class="bonus">+400 бонусных</p>
-                <div class="price">5 730 ₽</div>
-                <button onclick="addToCart('3680 монет', 5730)">
-                    Купить
-                </button>
+
+                <div class="coin-art">
+                    <div class="coin">
+                        ⚛
+                    </div>
+                </div>
+
+                <div class="product-info">
+
+                    <h3>3680 монет</h3>
+
+                    <div class="game-bonus">
+                        3280 + 400 бонус
+                    </div>
+
+                    <div class="product-bottom">
+
+                        <strong>
+                            5 730 ₽
+                        </strong>
+
+                        <button
+                            onclick="addToCart('3680 монет', 5730)"
+                        >
+                            Купить
+                        </button>
+
+                    </div>
+
+                </div>
+
             </div>
 
+
+            <!-- ПОПУЛЯРНЫЙ -->
 
             <div class="product popular">
+
                 <div class="popular-label">
-                    ПОПУЛЯРНО
+                    🔥 ПОПУЛЯРНЫЙ
                 </div>
 
-                <div class="coin-image">🪙</div>
-
-                <h3>7480 монет</h3>
-
-                <p class="bonus">
-                    +1000 бонусных
-                </p>
-
-                <div class="price">
-                    11 320 ₽
+                <div class="coin-art big">
+                    <div class="coin">
+                        ⚛
+                    </div>
                 </div>
 
-                <button onclick="addToCart('7480 монет', 11320)">
-                    Купить
-                </button>
+                <div class="product-info">
+
+                    <h3>7480 монет</h3>
+
+                    <div class="game-bonus">
+                        6480 + 1000 бонус
+                    </div>
+
+                    <div class="product-bottom">
+
+                        <strong>
+                            11 320 ₽
+                        </strong>
+
+                        <button
+                            onclick="addToCart('7480 монет', 11320)"
+                        >
+                            Купить
+                        </button>
+
+                    </div>
+
+                </div>
+
             </div>
+
 
         </div>
 
@@ -205,13 +455,16 @@
 
     <!-- BATTLE PASS -->
 
-    <section id="battlepass" class="products-section hidden">
+    <section
+        id="battlepass"
+        class="products-section hidden"
+    >
 
         <div class="products-grid">
 
             <div class="product battle-card">
 
-                <div class="battle-icon">
+                <div class="battle-image">
                     🏅
                 </div>
 
@@ -219,17 +472,23 @@
                     Battle Pass
                 </h3>
 
-                <p class="bonus">
+                <div class="game-bonus">
                     455 ⭐
-                </p>
-
-                <div class="price">
-                    590 ₽
                 </div>
 
-                <button onclick="addToCart('Battle Pass', 590)">
-                    Купить
-                </button>
+                <div class="product-bottom">
+
+                    <strong>
+                        590 ₽
+                    </strong>
+
+                    <button
+                        onclick="addToCart('Battle Pass', 590)"
+                    >
+                        Купить
+                    </button>
+
+                </div>
 
             </div>
 
@@ -240,20 +499,23 @@
 
     <!-- АКЦИИ -->
 
-    <section id="sales" class="products-section hidden">
+    <section
+        id="sales"
+        class="products-section hidden"
+    >
 
         <div class="sale-box">
 
-            <div class="sale-icon">
+            <div>
                 🔥
             </div>
 
             <h2>
-                Акции скоро
+                Акции
             </h2>
 
             <p>
-                Следите за обновлениями магазина.
+                Скоро здесь появятся специальные предложения.
             </p>
 
         </div>
@@ -263,13 +525,46 @@
 </main>
 
 
+<!-- НИЖНЕЕ МЕНЮ -->
+
+<nav class="bottom-nav">
+
+    <button onclick="scrollToShop()">
+        <span>🛒</span>
+        <small>Донат</small>
+    </button>
+
+    <button onclick="openProfile()">
+        <span>👤</span>
+        <small>Профиль</small>
+    </button>
+
+    <button onclick="openOrders()">
+        <span>📋</span>
+        <small>Заказы</small>
+    </button>
+
+    <button onclick="openSupport()">
+        <span>💬</span>
+        <small>Поддержка</small>
+    </button>
+
+</nav>
+
+
 <!-- КОРЗИНА -->
 
-<div id="cartModal" class="modal">
+<div
+    id="cartModal"
+    class="modal"
+>
 
-    <div class="modal-content">
+    <div class="modal-box">
 
-        <button class="close" onclick="closeCart()">
+        <button
+            class="modal-close"
+            onclick="closeModal('cartModal')"
+        >
             ×
         </button>
 
@@ -280,13 +575,186 @@
         <div id="cartItems"></div>
 
         <div class="cart-total">
-            <span>Итого:</span>
-            <strong id="cartTotal">0 ₽</strong>
+
+            <span>
+                Итого
+            </span>
+
+            <strong id="cartTotal">
+                0 ₽
+            </strong>
+
         </div>
 
-        <button class="checkout" onclick="checkout()">
+        <button
+            class="main-button"
+            onclick="checkout()"
+        >
             Перейти к оформлению
         </button>
+
+    </div>
+
+</div>
+
+
+<!-- ПРОФИЛЬ -->
+
+<div
+    id="profileModal"
+    class="modal"
+>
+
+    <div class="modal-box profile-box">
+
+        <button
+            class="modal-close"
+            onclick="closeModal('profileModal')"
+        >
+            ×
+        </button>
+
+        <div class="profile-avatar">
+            👤
+        </div>
+
+        <h2>
+            Твой профиль
+        </h2>
+
+        <div class="profile-id">
+            ID игрока
+        </div>
+
+        <input
+            id="playerId"
+            class="profile-input"
+            type="text"
+            placeholder="Введите игровой ID"
+        >
+
+        <div class="profile-stats">
+
+            <div>
+                <span>📦</span>
+                <p>Всего заказов</p>
+                <strong id="ordersCount">
+                    0
+                </strong>
+            </div>
+
+            <div>
+                <span>🪙</span>
+                <p>Бонусных монет</p>
+                <strong>
+                    0
+                </strong>
+            </div>
+
+        </div>
+
+        <button
+            class="main-button"
+            onclick="saveProfile()"
+        >
+            Сохранить профиль
+        </button>
+
+    </div>
+
+</div>
+
+
+<!-- ПОДДЕРЖКА -->
+
+<div
+    id="supportModal"
+    class="modal"
+>
+
+    <div class="modal-box support-box">
+
+        <button
+            class="modal-close"
+            onclick="closeModal('supportModal')"
+        >
+            ×
+        </button>
+
+        <div class="support-icon">
+            💬
+        </div>
+
+        <h2>
+            Поддержка
+        </h2>
+
+        <p class="support-text">
+            По всем вопросам обращайтесь
+            в нашу поддержку.
+        </p>
+
+        <div class="support-contact">
+
+            <span>
+                👤
+            </span>
+
+            <div>
+                <small>
+                    Telegram
+                </small>
+
+                <strong>
+                    @luxanixx
+                </strong>
+            </div>
+
+        </div>
+
+        <div class="support-time">
+            ⏱ Ответ обычно до 20 минут
+        </div>
+
+        <a
+            class="main-button telegram-button"
+            href="https://t.me/luxanixx"
+            target="_blank"
+        >
+            ✉️ Написать в Telegram
+        </a>
+
+    </div>
+
+</div>
+
+
+<!-- ЗАКАЗЫ -->
+
+<div
+    id="ordersModal"
+    class="modal"
+>
+
+    <div class="modal-box">
+
+        <button
+            class="modal-close"
+            onclick="closeModal('ordersModal')"
+        >
+            ×
+        </button>
+
+        <h2>
+            📋 Мои заказы
+        </h2>
+
+        <div
+            id="ordersList"
+            class="empty-orders"
+        >
+            Заказов пока нет
+        </div>
 
     </div>
 
@@ -300,18 +768,24 @@
     </div>
 
     <p>
-        Донат для Rust Mobile
+        Донат для китайского Rust Mobile
     </p>
 
     <div class="footer-links">
-        <a href="#">Поддержка</a>
-        <a href="#">Telegram</a>
-        <a href="#">Условия</a>
+
+        <button onclick="openSupport()">
+            Поддержка
+        </button>
+
+        <button onclick="openProfile()">
+            Профиль
+        </button>
+
     </div>
 
-    <p class="copyright">
+    <small>
         © 2026 Rust Mobile Shop
-    </p>
+    </small>
 
 </footer>
 
