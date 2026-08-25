@@ -1,22 +1,24 @@
 let cart = [];
 
 
-// ==============================
+// ======================================
 // КАТЕГОРИИ
-// ==============================
+// ======================================
 
 function showCategory(category, button) {
 
-    document.querySelectorAll(".products-section")
+    document
+        .querySelectorAll(".products-section")
         .forEach(section => {
             section.classList.add("hidden");
         });
 
-    document.getElementById(category)
+    document
+        .getElementById(category)
         .classList.remove("hidden");
 
-
-    document.querySelectorAll(".category")
+    document
+        .querySelectorAll(".category")
         .forEach(btn => {
             btn.classList.remove("active");
         });
@@ -26,20 +28,36 @@ function showCategory(category, button) {
 }
 
 
-// ==============================
+// ======================================
+// ПРОКРУТКА К МАГАЗИНУ
+// ======================================
+
+function scrollToShop() {
+
+    document
+        .getElementById("shop")
+        .scrollIntoView({
+            behavior: "smooth"
+        });
+
+}
+
+
+// ======================================
 // КОРЗИНА
-// ==============================
+// ======================================
 
 function addToCart(name, price) {
 
     cart.push({
-        name: name,
-        price: price
+        name,
+        price
     });
 
     updateCart();
 
     openCart();
+
 }
 
 
@@ -48,37 +66,34 @@ function removeFromCart(index) {
     cart.splice(index, 1);
 
     updateCart();
+
 }
 
 
 function updateCart() {
 
-    const cartItems =
+    const items =
         document.getElementById("cartItems");
 
-    const cartCount =
+    const count =
         document.getElementById("cartCount");
 
-    const cartTotal =
+    const totalElement =
         document.getElementById("cartTotal");
 
 
-    cartCount.innerText = cart.length;
+    count.textContent = cart.length;
 
 
     if (cart.length === 0) {
 
-        cartItems.innerHTML = `
-            <p style="
-                color:#777;
-                text-align:center;
-                padding:30px 0;
-            ">
-                Корзина пустая
-            </p>
+        items.innerHTML = `
+            <div class="empty-orders">
+                Корзина пока пустая
+            </div>
         `;
 
-        cartTotal.innerText = "0 ₽";
+        totalElement.textContent = "0 ₽";
 
         return;
     }
@@ -86,16 +101,14 @@ function updateCart() {
 
     let total = 0;
 
-
-    cartItems.innerHTML = "";
+    items.innerHTML = "";
 
 
     cart.forEach((item, index) => {
 
         total += item.price;
 
-
-        cartItems.innerHTML += `
+        items.innerHTML += `
 
             <div class="cart-item">
 
@@ -125,14 +138,11 @@ function updateCart() {
     });
 
 
-    cartTotal.innerText =
+    totalElement.textContent =
         formatPrice(total) + " ₽";
+
 }
 
-
-// ==============================
-// ФОРМАТ ЦЕНЫ
-// ==============================
 
 function formatPrice(price) {
 
@@ -141,70 +151,199 @@ function formatPrice(price) {
 }
 
 
-// ==============================
-// ОТКРЫТЬ КОРЗИНУ
-// ==============================
+// ======================================
+// МОДАЛКИ
+// ======================================
 
-function openCart() {
+function openModal(id) {
 
     document
-        .getElementById("cartModal")
+        .getElementById(id)
         .classList.add("show");
 
 }
 
 
-// ==============================
-// ЗАКРЫТЬ КОРЗИНУ
-// ==============================
-
-function closeCart() {
+function closeModal(id) {
 
     document
-        .getElementById("cartModal")
+        .getElementById(id)
         .classList.remove("show");
 
 }
 
 
-// ==============================
-// ОФОРМЛЕНИЕ
-// ==============================
+function openCart() {
 
-function checkout() {
+    openModal("cartModal");
 
-    if (cart.length === 0) {
+}
 
-        alert("Корзина пустая!");
+
+function openProfile() {
+
+    const savedId =
+        localStorage.getItem("rustPlayerId");
+
+    if (savedId) {
+
+        document
+            .getElementById("playerId")
+            .value = savedId;
+
+    }
+
+    openModal("profileModal");
+
+}
+
+
+function openSupport() {
+
+    openModal("supportModal");
+
+}
+
+
+function openOrders() {
+
+    openModal("ordersModal");
+
+}
+
+
+// ======================================
+// ПРОФИЛЬ
+// ======================================
+
+function saveProfile() {
+
+    const input =
+        document.getElementById("playerId");
+
+    const playerId =
+        input.value.trim();
+
+
+    if (!playerId) {
+
+        alert("Введите игровой ID.");
 
         return;
     }
 
 
+    localStorage.setItem(
+        "rustPlayerId",
+        playerId
+    );
+
+
+    alert("Профиль сохранён!");
+
+}
+
+
+// ======================================
+// ОФОРМЛЕНИЕ
+// ======================================
+
+function checkout() {
+
+    if (cart.length === 0) {
+
+        alert("Корзина пустая.");
+
+        return;
+    }
+
+
+    const playerId =
+        localStorage.getItem("rustPlayerId");
+
+
+    if (!playerId) {
+
+        closeModal("cartModal");
+
+        openProfile();
+
+        alert(
+            "Сначала укажите игровой ID."
+        );
+
+        return;
+    }
+
+
+    /*
+        На следующем этапе сюда подключим:
+
+        1. страницу оформления;
+        2. проверку игрового ID;
+        3. выбор способа оплаты;
+        4. создание номера заказа;
+        5. отправку заказа в Telegram;
+        6. реальную оплату.
+    */
+
     alert(
-        "Здесь подключим оформление заказа и оплату."
+        "Оформление заказа будет подключено следующим этапом."
     );
 
 }
 
 
-// ==============================
-// ЗАКРЫТИЕ ПО КЛИКУ ВНЕ ОКНА
-// ==============================
+// ======================================
+// ЗАКРЫТИЕ МОДАЛОК ПО ФОНУ
+// ======================================
 
 document
-    .getElementById("cartModal")
-    .addEventListener("click", function(event) {
+    .querySelectorAll(".modal")
+    .forEach(modal => {
 
-        if (event.target === this) {
-            closeCart();
-        }
+        modal.addEventListener(
+            "click",
+            function(event) {
+
+                if (event.target === modal) {
+
+                    modal.classList.remove("show");
+
+                }
+
+            }
+        );
 
     });
 
 
-// ==============================
-// НАЧАЛЬНАЯ ИНИЦИАЛИЗАЦИЯ
-// ==============================
+// ======================================
+// ESC
+// ======================================
+
+document.addEventListener(
+    "keydown",
+    function(event) {
+
+        if (event.key === "Escape") {
+
+            document
+                .querySelectorAll(".modal")
+                .forEach(modal => {
+
+                    modal.classList.remove("show");
+
+                });
+
+        }
+
+    }
+);
+
+
+// ======================================
+// СТАРТ
+// ======================================
 
 updateCart();
