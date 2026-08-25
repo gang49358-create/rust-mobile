@@ -258,6 +258,38 @@ function checkout() {
     }
 
 
+    const savedId =
+        localStorage.getItem("rustPlayerId");
+
+
+    if (savedId) {
+
+        document
+            .getElementById("checkoutPlayerId")
+            .value = savedId;
+
+    }
+
+
+    const orderNumber =
+        generateOrderNumber();
+
+
+    document
+        .getElementById("orderNumber")
+        .textContent = orderNumber;
+
+
+    renderCheckoutItems();
+
+
+    closeModal("cartModal");
+
+    openModal("checkoutModal");
+
+}
+
+
     const playerId =
         localStorage.getItem("rustPlayerId");
 
