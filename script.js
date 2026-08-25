@@ -1,9 +1,14 @@
 /* =========================================
    RUST MOBILE SHOP
-   Telegram продавца: @luxanixx
+   script.js
 ========================================= */
 
-const SELLER_USERNAME = "luxanixx";
+
+/* =========================================
+   TELEGRAM ПРОДАВЦА
+========================================= */
+
+const TELEGRAM_SELLER = "luxanixx";
 
 
 /* =========================================
@@ -97,159 +102,83 @@ const products = {
 
 
 /* =========================================
-   КОРЗИНА
+   CART
 ========================================= */
 
-let cart = loadStorage("rustCart", []);
-
-if (!Array.isArray(cart)) {
-    cart = [];
-}
+let cart = JSON.parse(
+    localStorage.getItem("rustCart") || "[]"
+);
 
 
 /* =========================================
-   ЗАПУСК
+   START
 ========================================= */
 
-document.addEventListener("DOMContentLoaded", function () {
+document.addEventListener("DOMContentLoaded", () => {
 
-    showCategory(
-        "coins",
-        document.querySelector(".category")
-    );
+    const firstCategory =
+        document.querySelector(".category");
+
+    showCategory("coins", firstCategory);
 
     updateCart();
     renderOrders();
     updateProfile();
 
+    prepareCheckoutFields();
+
 });
 
 
 /* =========================================
-   LOCAL STORAGE
-========================================= */
-
-function loadStorage(key, fallback) {
-
-    try {
-
-        const value = localStorage.getItem(key);
-
-        if (!value) {
-            return fallback;
-        }
-
-        return JSON.parse(value);
-
-    } catch (error) {
-
-        console.error("Storage error:", error);
-
-        return fallback;
-
-    }
-
-}
-
-
-function saveCart() {
-
-    try {
-
-        localStorage.setItem(
-            "rustCart",
-            JSON.stringify(cart)
-        );
-
-    } catch (error) {
-
-        console.error(
-            "Ошибка сохранения корзины:",
-            error
-        );
-
-    }
-
-}
-
-
-/* =========================================
-   КАТЕГОРИИ
+   CATEGORY
 ========================================= */
 
 function showCategory(category, button) {
 
-    if (!products[category]) {
-        return;
-    }
-
-
     document
         .querySelectorAll(".category")
-        .forEach(function (item) {
-
+        .forEach(item => {
             item.classList.remove("active");
-
         });
 
-
     if (button) {
-
         button.classList.add("active");
-
     }
-
 
     const container =
         document.getElementById("products");
 
-
-    if (!container) {
+    if (!container || !products[category]) {
         return;
     }
 
-
     container.innerHTML = "";
 
-
-    products[category].forEach(function (product) {
-
-        container.innerHTML +=
-            createProductHTML(product);
-
+    products[category].forEach(product => {
+        container.innerHTML += createProductHTML(product);
     });
 
 }
 
 
 /* =========================================
-   КАРТОЧКА ТОВАРА
+   PRODUCT HTML
 ========================================= */
 
 function createProductHTML(product) {
 
     return `
-
         <article class="product">
 
             <div class="product-image">
-
                 <div class="product-coins">
 
-                    <div class="mini-coin">
-                        ✦
-                    </div>
-
-                    <div class="mini-coin">
-                        ✦
-                    </div>
-
-                    <div class="mini-coin">
-                        ✦
-                    </div>
+                    <div class="mini-coin">✦</div>
+                    <div class="mini-coin">✦</div>
+                    <div class="mini-coin">✦</div>
 
                 </div>
-
             </div>
 
             <h3>
@@ -276,81 +205,60 @@ function createProductHTML(product) {
             </div>
 
         </article>
-
     `;
-
 }
 
 
 /* =========================================
-   ПОИСК ТОВАРА
+   FIND PRODUCT
 ========================================= */
 
 function findProduct(id) {
 
     for (const category in products) {
 
-        const product =
-            products[category].find(function (item) {
-
-                return item.id === id;
-
-            });
-
+        const product = products[category].find(
+            item => item.id === id
+        );
 
         if (product) {
             return product;
         }
-
     }
 
     return null;
-
 }
 
 
 /* =========================================
-   ДОБАВИТЬ В КОРЗИНУ
+   ADD TO CART
 ========================================= */
 
 function addToCart(id) {
 
     const product = findProduct(id);
 
-
     if (!product) {
-
         showToast("Товар не найден");
-
         return;
-
     }
 
-
     cart.push({
-
         id: product.id,
-
         name: product.name,
-
-        price: Number(product.price),
-
+        price: product.price,
         description: product.description
-
     });
 
-
     saveCart();
-
     updateCart();
 
     showToast("Товар добавлен в корзину");
-
 }
 
 
 /* =========================================
-   УДАЛИТЬ ИЗ КОРЗИНЫ
+   REMOVE FROM CART
 ========================================= */
 
 function removeFromCart(index) {
@@ -362,39 +270,44 @@ function removeFromCart(index) {
         return;
     }
 
-
     cart.splice(index, 1);
 
     saveCart();
-
     updateCart();
-
     renderCart();
-
 }
 
 
 /* =========================================
-   СЧЁТЧИК КОРЗИНЫ
+   SAVE CART
+========================================= */
+
+function saveCart() {
+
+    localStorage.setItem(
+        "rustCart",
+        JSON.stringify(cart)
+    );
+}
+
+
+/* =========================================
+   UPDATE CART
 ========================================= */
 
 function updateCart() {
 
-    const element =
+    const count =
         document.getElementById("cartCount");
 
-
-    if (element) {
-
-        element.textContent = cart.length;
-
+    if (count) {
+        count.textContent = cart.length;
     }
-
 }
 
 
 /* =========================================
-   ОТКРЫТЬ КОРЗИНУ
+   OPEN CART
 ========================================= */
 
 function openCart() {
@@ -402,12 +315,11 @@ function openCart() {
     renderCart();
 
     openModal("cartModal");
-
 }
 
 
 /* =========================================
-   КОРЗИНА
+   RENDER CART
 ========================================= */
 
 function renderCart() {
@@ -415,60 +327,37 @@ function renderCart() {
     const container =
         document.getElementById("cartItems");
 
-
     const totalElement =
         document.getElementById("cartTotal");
 
-
-    if (!container) {
+    if (!container || !totalElement) {
         return;
     }
-
 
     if (!cart.length) {
 
         container.innerHTML = `
-
             <div class="empty">
-
                 🛒
-
                 <br><br>
-
                 Корзина пустая
-
             </div>
-
         `;
 
-
-        if (totalElement) {
-            totalElement.textContent = "0 ₽";
-        }
-
+        totalElement.textContent = "0 ₽";
 
         return;
-
     }
-
 
     container.innerHTML = "";
 
-
     let total = 0;
 
+    cart.forEach((item, index) => {
 
-    cart.forEach(function (item, index) {
-
-        const price =
-            Number(item.price) || 0;
-
-
-        total += price;
-
+        total += Number(item.price) || 0;
 
         container.innerHTML += `
-
             <div class="cart-item">
 
                 <div class="cart-item-info">
@@ -478,7 +367,7 @@ function renderCart() {
                     </strong>
 
                     <span>
-                        ${formatPrice(price)} ₽
+                        ${formatPrice(item.price)} ₽
                     </span>
 
                 </div>
@@ -492,16 +381,129 @@ function renderCart() {
                 </button>
 
             </div>
-
         `;
-
     });
 
+    totalElement.textContent =
+        formatPrice(total) + " ₽";
+}
 
-    if (totalElement) {
 
-        totalElement.textContent =
-            formatPrice(total) + " ₽";
+/* =========================================
+   PREPARE CHECKOUT FIELDS
+========================================= */
+
+function prepareCheckoutFields() {
+
+    const playerField =
+        document.getElementById("checkoutPlayerId");
+
+    if (!playerField) {
+        return;
+    }
+
+    /*
+       Старое поле "Игровой ID" превращаем
+       в "Почта / WeChat ID".
+    */
+
+    const wrapper =
+        playerField.closest(".form-group") ||
+        playerField.parentElement;
+
+    if (wrapper) {
+
+        const label =
+            wrapper.querySelector("label");
+
+        if (label) {
+            label.textContent =
+                "📧 Почта / WeChat ID";
+        }
+    }
+
+    playerField.placeholder =
+        "Введите почту или WeChat ID";
+
+    playerField.autocomplete =
+        "email";
+
+    playerField.removeAttribute("name");
+
+
+    /*
+       Добавляем безопасное второе поле:
+       комментарий к заказу.
+    */
+
+    if (
+        document.getElementById(
+            "checkoutComment"
+        )
+    ) {
+        return;
+    }
+
+    const commentWrapper =
+        document.createElement("div");
+
+    commentWrapper.className =
+        "form-group checkout-extra-field";
+
+    commentWrapper.innerHTML = `
+        <label
+            for="checkoutComment"
+            style="
+                display:block;
+                margin-bottom:8px;
+                font-weight:600;
+            "
+        >
+            📝 Комментарий к заказу
+        </label>
+
+        <textarea
+            id="checkoutComment"
+            placeholder="Например: нужен донат на этот аккаунт"
+            rows="3"
+            maxlength="500"
+            style="
+                width:100%;
+                box-sizing:border-box;
+                resize:vertical;
+            "
+        ></textarea>
+    `;
+
+    /*
+       Ставим поле перед способом оплаты.
+    */
+
+    const payment =
+        document.getElementById(
+            "paymentMethod"
+        );
+
+    if (payment) {
+
+        const paymentWrapper =
+            payment.closest(".form-group") ||
+            payment.parentElement;
+
+        if (paymentWrapper) {
+
+            paymentWrapper.parentNode.insertBefore(
+                commentWrapper,
+                paymentWrapper
+            );
+
+        }
+
+    } else {
+
+        playerField.parentNode.appendChild(
+            commentWrapper
+        );
 
     }
 
@@ -509,7 +511,7 @@ function renderCart() {
 
 
 /* =========================================
-   ОФОРМЛЕНИЕ
+   CHECKOUT
 ========================================= */
 
 function checkout() {
@@ -519,82 +521,63 @@ function checkout() {
         showToast("Корзина пустая");
 
         return;
-
     }
 
+    prepareCheckoutFields();
 
-    const savedId =
-        localStorage.getItem("rustPlayerId");
+    const savedEmail =
+        localStorage.getItem(
+            "rustContact"
+        );
 
-
-    const playerInput =
+    const contact =
         document.getElementById(
             "checkoutPlayerId"
         );
 
-
-    if (
-        playerInput &&
-        savedId
-    ) {
-
-        playerInput.value = savedId;
-
+    if (contact && savedEmail) {
+        contact.value = savedEmail;
     }
-
 
     const orderNumber =
         generateOrderNumber();
 
-
-    const orderElement =
+    const numberElement =
         document.getElementById(
             "orderNumber"
         );
 
-
-    if (orderElement) {
-
-        orderElement.textContent =
+    if (numberElement) {
+        numberElement.textContent =
             orderNumber;
-
     }
 
-
     renderCheckoutItems();
-
 
     closeModal("cartModal");
 
     openModal("checkoutModal");
-
 }
 
 
 /* =========================================
-   НОМЕР ЗАКАЗА
+   ORDER NUMBER
 ========================================= */
 
 function generateOrderNumber() {
 
     const now = new Date();
 
-
     const year =
         now.getFullYear();
 
-
     const month =
-        String(
-            now.getMonth() + 1
-        ).padStart(2, "0");
-
+        String(now.getMonth() + 1)
+            .padStart(2, "0");
 
     const day =
-        String(
-            now.getDate()
-        ).padStart(2, "0");
-
+        String(now.getDate())
+            .padStart(2, "0");
 
     const random =
         Math.floor(
@@ -602,21 +585,12 @@ function generateOrderNumber() {
             Math.random() * 900000
         );
 
-
-    return (
-        "RM-" +
-        year +
-        month +
-        day +
-        "-" +
-        random
-    );
-
+    return `RM-${year}${month}${day}-${random}`;
 }
 
 
 /* =========================================
-   ТОВАРЫ В ОФОРМЛЕНИИ
+   CHECKOUT ITEMS
 ========================================= */
 
 function renderCheckoutItems() {
@@ -626,35 +600,24 @@ function renderCheckoutItems() {
             "checkoutItems"
         );
 
-
     const totalElement =
         document.getElementById(
             "checkoutTotal"
         );
 
-
-    if (!container) {
+    if (!container || !totalElement) {
         return;
     }
 
-
     container.innerHTML = "";
-
 
     let total = 0;
 
+    cart.forEach(item => {
 
-    cart.forEach(function (item) {
-
-        const price =
-            Number(item.price) || 0;
-
-
-        total += price;
-
+        total += Number(item.price) || 0;
 
         container.innerHTML += `
-
             <div class="checkout-item">
 
                 <span class="checkout-item-name">
@@ -662,119 +625,123 @@ function renderCheckoutItems() {
                 </span>
 
                 <span class="checkout-item-price">
-                    ${formatPrice(price)} ₽
+                    ${formatPrice(item.price)} ₽
                 </span>
 
             </div>
-
         `;
-
     });
 
-
-    if (totalElement) {
-
-        totalElement.textContent =
-            formatPrice(total) + " ₽";
-
-    }
-
+    totalElement.textContent =
+        formatPrice(total) + " ₽";
 }
 
 
 /* =========================================
-   СОЗДАНИЕ ЗАКАЗА
+   CREATE ORDER
 ========================================= */
 
 function createOrder() {
 
-    const playerInput =
+    prepareCheckoutFields();
+
+    const contactElement =
         document.getElementById(
             "checkoutPlayerId"
         );
 
+    const commentElement =
+        document.getElementById(
+            "checkoutComment"
+        );
 
-    const paymentInput =
+    const paymentElement =
         document.getElementById(
             "paymentMethod"
         );
 
-
-    const agreementInput =
+    const agreementElement =
         document.getElementById(
             "agreement"
         );
-
 
     const orderElement =
         document.getElementById(
             "orderNumber"
         );
 
+    const contact =
+        contactElement
+            ? contactElement.value.trim()
+            : "";
 
-    if (!playerInput) {
+    const comment =
+        commentElement
+            ? commentElement.value.trim()
+            : "";
 
-        showToast(
-            "Поле игрового ID не найдено"
-        );
+    const paymentMethod =
+        paymentElement
+            ? paymentElement.value
+            : "Не указан";
 
-        return;
-
-    }
-
-
-    const playerId =
-        playerInput.value.trim();
-
-
-    if (!playerId) {
-
-        showToast(
-            "Введите игровой ID"
-        );
-
-        return;
-
-    }
-
-
-    if (
-        agreementInput &&
-        !agreementInput.checked
-    ) {
-
-        showToast(
-            "Подтвердите правильность ID"
-        );
-
-        return;
-
-    }
-
-
-    if (!cart.length) {
-
-        showToast(
-            "Корзина пустая"
-        );
-
-        return;
-
-    }
-
+    const agreement =
+        agreementElement
+            ? agreementElement.checked
+            : true;
 
     const orderNumber =
-        orderElement &&
-        orderElement.textContent
+        orderElement
             ? orderElement.textContent.trim()
             : generateOrderNumber();
 
 
-    const paymentValue =
-        paymentInput
-            ? paymentInput.value
-            : "card";
+    /* Проверяем контакт */
 
+    if (!contact) {
+
+        showToast(
+            "Введите Почту / WeChat ID"
+        );
+
+        if (contactElement) {
+            contactElement.focus();
+        }
+
+        return;
+    }
+
+
+    /* Проверяем согласие */
+
+    if (!agreement) {
+
+        showToast(
+            "Подтвердите правильность данных"
+        );
+
+        return;
+    }
+
+
+    /* Считаем сумму */
+
+    let total = 0;
+
+    cart.forEach(item => {
+        total += Number(item.price) || 0;
+    });
+
+
+    /* Сохраняем контакт */
+
+    localStorage.setItem(
+        "rustContact",
+        contact
+    );
+
+
+    /* Названия способов оплаты */
 
     const paymentNames = {
 
@@ -787,174 +754,20 @@ function createOrder() {
     };
 
 
-    const paymentMethod =
-        paymentNames[paymentValue] ||
-        paymentValue;
+    const paymentName =
+        paymentNames[paymentMethod] ||
+        paymentMethod ||
+        "Не указан";
 
 
-    let total = 0;
-
-
-    const items =
-        cart.map(function (item) {
-
-            const price =
-                Number(item.price) || 0;
-
-
-            total += price;
-
-
-            return {
-
-                id: item.id,
-
-                name: item.name,
-
-                price: price
-
-            };
-
-        });
-
-
-    const order = {
-
-        id: orderNumber,
-
-        orderNumber: orderNumber,
-
-        playerId: playerId,
-
-        items: items,
-
-        total: total,
-
-        paymentMethod: paymentMethod,
-
-        status: "Новый",
-
-        date: new Date().toISOString()
-
-    };
-
-
-    let orders =
-        loadStorage(
-            "rustOrders",
-            []
-        );
-
-
-    if (!Array.isArray(orders)) {
-        orders = [];
-    }
-
-
-    orders.unshift(order);
-
-
-    localStorage.setItem(
-        "rustOrders",
-        JSON.stringify(orders)
-    );
-
-
-    localStorage.setItem(
-        "rustPlayerId",
-        playerId
-    );
-
-
-    /* =====================================
-       ОКНО УСПЕШНОГО ЗАКАЗА
-    ===================================== */
-
-    const successNumber =
-        document.getElementById(
-            "successOrderNumber"
-        );
-
-
-    const successPlayer =
-        document.getElementById(
-            "successPlayerId"
-        );
-
-
-    const successTotal =
-        document.getElementById(
-            "successTotal"
-        );
-
-
-    if (successNumber) {
-
-        successNumber.textContent =
-            orderNumber;
-
-    }
-
-
-    if (successPlayer) {
-
-        successPlayer.textContent =
-            playerId;
-
-    }
-
-
-    if (successTotal) {
-
-        successTotal.textContent =
-            formatPrice(total) + " ₽";
-
-    }
-
-
-    /* =====================================
-       ОТКРЫВАЕМ TELEGRAM ПРОДАВЦА
-    ===================================== */
-
-    openTelegramOrder(order);
-
-
-    /* =====================================
-       ОЧИЩАЕМ КОРЗИНУ
-    ===================================== */
-
-    cart = [];
-
-    saveCart();
-
-    updateCart();
-
-    renderOrders();
-
-    updateProfile();
-
-
-    closeModal("checkoutModal");
-
-    openModal("successModal");
-
-}
-
-
-/* =========================================
-   TELEGRAM ПРОДАВЦА
-========================================= */
-
-function openTelegramOrder(order) {
+    /* Время */
 
     const now = new Date();
-
 
     const date =
         now.toLocaleDateString(
             "ru-RU"
         );
-
 
     const time =
         now.toLocaleTimeString(
@@ -966,67 +779,229 @@ function openTelegramOrder(order) {
         );
 
 
-    const items =
-        order.items
-            .map(function (item) {
+    /* Товары */
 
-                return (
-                    item.name +
-                    " — " +
-                    formatPrice(item.price) +
-                    " ₽"
-                );
-
-            })
+    const itemsText =
+        cart
+            .map(item =>
+                `${item.name} — ${formatPrice(item.price)} ₽`
+            )
             .join("\n");
 
+
+    /* Заказ */
+
+    const order = {
+
+        id: orderNumber,
+
+        contact: contact,
+
+        items: [...cart],
+
+        total: total,
+
+        paymentMethod: paymentName,
+
+        comment: comment,
+
+        status: "Новый",
+
+        date: now.toISOString()
+
+    };
+
+
+    /* Сохраняем историю */
+
+    let orders =
+        JSON.parse(
+            localStorage.getItem(
+                "rustOrders"
+            ) || "[]"
+        );
+
+
+    orders.unshift(order);
+
+
+    localStorage.setItem(
+        "rustOrders",
+        JSON.stringify(orders)
+    );
+
+
+    /*
+       Готовый текст для продавца.
+    */
 
     const message =
 `🛒 НОВЫЙ ЗАКАЗ
 
 🔢 Номер заказа:
-${order.orderNumber}
+${orderNumber}
 
 📦 Товар:
-${items}
+${itemsText}
 
 💰 Сумма:
-${formatPrice(order.total)} ₽
+${formatPrice(total)} ₽
 
-🎮 Игровой ID:
-${order.playerId}
+📧 Почта / WeChat ID:
+${contact}
 
 💳 Способ оплаты:
-${order.paymentMethod}
+${paymentName}
+
+📝 Комментарий:
+${comment || "Нет"}
 
 📅 Дата:
 ${date}
 
 🕐 Время:
-${time}`;
+${time}
 
-
-    const telegramUrl =
-        "https://t.me/" +
-        SELLER_USERNAME +
-        "?text=" +
-        encodeURIComponent(
-            message
-        );
+⏳ Статус:
+Ожидает оплаты`;
 
 
     /*
-       Открываем Telegram.
+       Показываем номер заказа
     */
 
-    window.location.href =
-        telegramUrl;
+    const successNumber =
+        document.getElementById(
+            "successOrderNumber"
+        );
+
+    const successContact =
+        document.getElementById(
+            "successPlayerId"
+        );
+
+    const successTotal =
+        document.getElementById(
+            "successTotal"
+        );
+
+
+    if (successNumber) {
+        successNumber.textContent =
+            orderNumber;
+    }
+
+    if (successContact) {
+        successContact.textContent =
+            contact;
+    }
+
+    if (successTotal) {
+        successTotal.textContent =
+            formatPrice(total) + " ₽";
+    }
+
+
+    /*
+       Очищаем корзину.
+    */
+
+    cart = [];
+
+    saveCart();
+    updateCart();
+
+    renderOrders();
+    updateProfile();
+
+
+    /*
+       Закрываем оформление.
+    */
+
+    closeModal("checkoutModal");
+
+
+    /*
+       Сохраняем текст, чтобы можно было
+       открыть Telegram ещё раз.
+    */
+
+    sessionStorage.setItem(
+        "lastTelegramMessage",
+        message
+    );
+
+
+    /*
+       Открываем Telegram продавца
+       с предварительно заполненным текстом.
+    */
+
+    openTelegramSeller(message);
+
+
+    /*
+       Показываем страницу успешного заказа.
+    */
+
+    setTimeout(() => {
+
+        openModal("successModal");
+
+    }, 500);
 
 }
 
 
 /* =========================================
-   ИСТОРИЯ ЗАКАЗОВ
+   TELEGRAM SELLER
+========================================= */
+
+function openTelegramSeller(message) {
+
+    const encoded =
+        encodeURIComponent(message);
+
+    const url =
+        `https://t.me/${TELEGRAM_SELLER}?text=${encoded}`;
+
+
+    /*
+       На телефоне Telegram откроется
+       через обычную ссылку.
+    */
+
+    window.location.href = url;
+}
+
+
+/* =========================================
+   OPEN TELEGRAM AGAIN
+========================================= */
+
+function openLastTelegramOrder() {
+
+    const message =
+        sessionStorage.getItem(
+            "lastTelegramMessage"
+        );
+
+    if (!message) {
+
+        showToast(
+            "Нет последнего заказа"
+        );
+
+        return;
+    }
+
+    openTelegramSeller(message);
+}
+
+
+/* =========================================
+   ORDERS
 ========================================= */
 
 function renderOrders() {
@@ -1036,28 +1011,21 @@ function renderOrders() {
             "ordersList"
         );
 
-
     if (!container) {
         return;
     }
 
-
-    let orders =
-        loadStorage(
-            "rustOrders",
-            []
+    const orders =
+        JSON.parse(
+            localStorage.getItem(
+                "rustOrders"
+            ) || "[]"
         );
-
-
-    if (!Array.isArray(orders)) {
-        orders = [];
-    }
 
 
     if (!orders.length) {
 
         container.innerHTML = `
-
             <div class="empty">
 
                 📋
@@ -1067,86 +1035,53 @@ function renderOrders() {
                 Заказов пока нет.
 
             </div>
-
         `;
 
         return;
-
     }
 
 
     container.innerHTML = "";
 
 
-    orders.forEach(function (order) {
+    orders.forEach(order => {
 
-        let date = "—";
-
-
-        if (order.date) {
-
-            try {
-
-                date =
-                    new Date(
-                        order.date
-                    ).toLocaleString(
-                        "ru-RU"
-                    );
-
-            } catch (error) {
-
-                date = "—";
-
-            }
-
-        }
-
-
-        const number =
-            order.orderNumber ||
-            order.id ||
-            "—";
+        const date =
+            new Date(order.date)
+                .toLocaleString(
+                    "ru-RU"
+                );
 
 
         container.innerHTML += `
-
             <div class="order-history-item">
 
                 <div class="order-history-top">
 
                     <span class="order-history-number">
-                        ${escapeHTML(number)}
+                        ${escapeHTML(order.id)}
                     </span>
 
                     <span class="order-history-status">
-                        ${escapeHTML(
-                            order.status || "Новый"
-                        )}
+                        ${escapeHTML(order.status)}
                     </span>
 
                 </div>
 
                 <div class="order-history-info">
 
-                    🎮 ID:
-                    ${escapeHTML(
-                        order.playerId || "—"
-                    )}
+                    📧 Контакт:
+                    ${escapeHTML(order.contact)}
 
                     <br>
 
                     💰 Сумма:
-                    ${formatPrice(
-                        order.total || 0
-                    )} ₽
+                    ${formatPrice(order.total)} ₽
 
                     <br>
 
                     💳 Оплата:
-                    ${escapeHTML(
-                        order.paymentMethod || "—"
-                    )}
+                    ${escapeHTML(order.paymentMethod)}
 
                     <br>
 
@@ -1155,45 +1090,37 @@ function renderOrders() {
                 </div>
 
             </div>
-
         `;
-
     });
-
 }
 
 
 /* =========================================
-   ПРОФИЛЬ
+   PROFILE
 ========================================= */
 
 function updateProfile() {
 
-    const playerId =
+    const contact =
         localStorage.getItem(
-            "rustPlayerId"
-        ) ||
-        "Не указан";
+            "rustContact"
+        ) || "Не указан";
 
 
-    let orders =
-        loadStorage(
-            "rustOrders",
-            []
+    const orders =
+        JSON.parse(
+            localStorage.getItem(
+                "rustOrders"
+            ) || "[]"
         );
 
 
-    if (!Array.isArray(orders)) {
-        orders = [];
-    }
+    let spent = 0;
 
 
-    let totalSpent = 0;
+    orders.forEach(order => {
 
-
-    orders.forEach(function (order) {
-
-        totalSpent +=
+        spent +=
             Number(order.total) || 0;
 
     });
@@ -1204,12 +1131,10 @@ function updateProfile() {
             "profileId"
         );
 
-
     const ordersElement =
         document.getElementById(
             "profileOrders"
         );
-
 
     const spentElement =
         document.getElementById(
@@ -1218,81 +1143,60 @@ function updateProfile() {
 
 
     if (idElement) {
-
         idElement.textContent =
-            playerId;
-
+            contact;
     }
-
 
     if (ordersElement) {
-
         ordersElement.textContent =
             orders.length;
-
     }
-
 
     if (spentElement) {
-
         spentElement.textContent =
-            formatPrice(totalSpent) +
-            " ₽";
-
+            formatPrice(spent) + " ₽";
     }
-
 }
 
 
 /* =========================================
-   ПРОФИЛЬ
+   PROFILE
 ========================================= */
 
 function openProfile() {
 
     updateProfile();
 
-    openModal(
-        "profileModal"
-    );
-
+    openModal("profileModal");
 }
 
 
 /* =========================================
-   ЗАКАЗЫ
+   ORDERS
 ========================================= */
 
 function openOrders() {
 
     renderOrders();
 
-    closeModal(
-        "profileModal"
-    );
+    closeModal("profileModal");
 
-    openModal(
-        "ordersModal"
-    );
-
+    openModal("ordersModal");
 }
 
 
 /* =========================================
-   ПОДДЕРЖКА
+   SUPPORT
 ========================================= */
 
 function openSupport() {
 
-    openModal(
-        "supportModal"
-    );
-
+    openModal("supportModal");
 }
 
 
 /* =========================================
-   МОДАЛЬНОЕ ОКНО
+   MODALS
 ========================================= */
 
 function openModal(id) {
@@ -1300,24 +1204,14 @@ function openModal(id) {
     const modal =
         document.getElementById(id);
 
-
     if (!modal) {
-
-        console.error(
-            "Modal not found:",
-            id
-        );
-
         return;
-
     }
-
 
     modal.classList.add("open");
 
     document.body.style.overflow =
         "hidden";
-
 }
 
 
@@ -1326,31 +1220,26 @@ function closeModal(id) {
     const modal =
         document.getElementById(id);
 
-
     if (!modal) {
         return;
     }
-
 
     modal.classList.remove("open");
 
     document.body.style.overflow =
         "";
-
 }
 
 
 /* =========================================
-   ЗАКРЫТИЕ ПО ФОНУ
+   CLICK OUTSIDE
 ========================================= */
 
 document.addEventListener(
     "click",
-    function (event) {
+    event => {
 
         if (
-            event.target &&
-            event.target.classList &&
             event.target.classList.contains(
                 "modal"
             )
@@ -1364,7 +1253,6 @@ document.addEventListener(
                 "";
 
         }
-
     }
 );
 
@@ -1375,18 +1263,19 @@ document.addEventListener(
 
 document.addEventListener(
     "keydown",
-    function (event) {
+    event => {
 
-        if (event.key !== "Escape") {
+        if (
+            event.key !== "Escape"
+        ) {
             return;
         }
-
 
         document
             .querySelectorAll(
                 ".modal.open"
             )
-            .forEach(function (modal) {
+            .forEach(modal => {
 
                 modal.classList.remove(
                     "open"
@@ -1394,16 +1283,14 @@ document.addEventListener(
 
             });
 
-
         document.body.style.overflow =
             "";
-
     }
 );
 
 
 /* =========================================
-   КОПИРОВАНИЕ НОМЕРА
+   COPY ORDER NUMBER
 ========================================= */
 
 function copyOrderNumber() {
@@ -1413,16 +1300,13 @@ function copyOrderNumber() {
             "orderNumber"
         );
 
-
     if (!element) {
         return;
     }
 
-
     copyText(
-        element.textContent.trim()
+        element.textContent
     );
-
 }
 
 
@@ -1433,85 +1317,60 @@ function copySuccessOrder() {
             "successOrderNumber"
         );
 
-
     if (!element) {
         return;
     }
 
-
     copyText(
-        element.textContent.trim()
+        element.textContent
     );
-
 }
 
 
 /* =========================================
-   COPY TEXT
+   COPY
 ========================================= */
 
 function copyText(text) {
 
     if (
         navigator.clipboard &&
-        window.isSecureContext
+        navigator.clipboard.writeText
     ) {
 
         navigator.clipboard
             .writeText(text)
-            .then(function () {
+            .then(() => {
 
                 showToast(
-                    "Номер заказа скопирован"
+                    "Скопировано"
                 );
 
             })
-            .catch(function () {
+            .catch(() => {
 
-                fallbackCopy(text);
+                showToast(
+                    "Не удалось скопировать"
+                );
 
             });
 
         return;
-
     }
 
-
-    fallbackCopy(text);
-
-}
-
-
-/* =========================================
-   FALLBACK COPY
-========================================= */
-
-function fallbackCopy(text) {
 
     const textarea =
         document.createElement(
             "textarea"
         );
 
-
     textarea.value = text;
-
-    textarea.style.position =
-        "fixed";
-
-    textarea.style.left =
-        "-9999px";
-
 
     document.body.appendChild(
         textarea
     );
 
-
-    textarea.focus();
-
     textarea.select();
-
 
     try {
 
@@ -1519,9 +1378,8 @@ function fallbackCopy(text) {
             "copy"
         );
 
-
         showToast(
-            "Номер заказа скопирован"
+            "Скопировано"
         );
 
     } catch (error) {
@@ -1532,16 +1390,12 @@ function fallbackCopy(text) {
 
     }
 
-
-    document.body.removeChild(
-        textarea
-    );
-
+    textarea.remove();
 }
 
 
 /* =========================================
-   ПРОКРУТКА
+   SCROLL
 ========================================= */
 
 function scrollToSection(id) {
@@ -1549,84 +1403,55 @@ function scrollToSection(id) {
     const element =
         document.getElementById(id);
 
-
     if (!element) {
         return;
     }
 
-
     element.scrollIntoView({
         behavior: "smooth"
     });
-
 }
 
 
 /* =========================================
-   ФОРМАТ ЦЕНЫ
+   FORMAT PRICE
 ========================================= */
 
 function formatPrice(price) {
 
-    return Number(
-        price || 0
-    ).toLocaleString(
-        "ru-RU"
-    );
-
+    return Number(price || 0)
+        .toLocaleString("ru-RU");
 }
 
 
 /* =========================================
-   ЗАЩИТА HTML
+   ESCAPE HTML
 ========================================= */
 
 function escapeHTML(value) {
 
-    return String(value)
-
-        .replace(
-            /&/g,
-            "&amp;"
-        )
-
-        .replace(
-            /</g,
-            "&lt;"
-        )
-
-        .replace(
-            />/g,
-            "&gt;"
-        )
-
-        .replace(
-            /"/g,
-            "&quot;"
-        )
-
-        .replace(
-            /'/g,
-            "&#039;"
-        );
-
+    return String(value ?? "")
+        .replace(/&/g, "&amp;")
+        .replace(/</g, "&lt;")
+        .replace(/>/g, "&gt;")
+        .replace(/"/g, "&quot;")
+        .replace(/'/g, "&#039;");
 }
 
 
 /* =========================================
-   УВЕДОМЛЕНИЯ
+   TOAST
 ========================================= */
 
 function showToast(message) {
 
-    const oldToast =
+    const old =
         document.querySelector(
             ".toast"
         );
 
-
-    if (oldToast) {
-        oldToast.remove();
+    if (old) {
+        old.remove();
     }
 
 
@@ -1635,10 +1460,8 @@ function showToast(message) {
             "div"
         );
 
-
     toast.className =
         "toast";
-
 
     toast.textContent =
         message;
@@ -1649,7 +1472,7 @@ function showToast(message) {
     );
 
 
-    setTimeout(function () {
+    setTimeout(() => {
 
         toast.classList.add(
             "show"
@@ -1658,21 +1481,17 @@ function showToast(message) {
     }, 10);
 
 
-    setTimeout(function () {
+    setTimeout(() => {
 
         toast.classList.remove(
             "show"
         );
 
+        setTimeout(() => {
 
-        setTimeout(function () {
-
-            if (toast.parentNode) {
-                toast.remove();
-            }
+            toast.remove();
 
         }, 250);
 
     }, 2200);
-
 }
