@@ -269,7 +269,368 @@ function checkout() {
             .value = savedId;
 
     }
+// ======================================
+// ГЕНЕРАЦИЯ НОМЕРА ЗАКАЗА
+// ======================================
 
+function generateOrderNumber() {
+
+    const now = new Date();
+
+
+    const year =
+        now.getFullYear();
+
+
+    const month =
+        String(now.getMonth() + 1)
+            .padStart(2, "0");
+
+
+    const day =
+        String(now.getDate())
+            .padStart(2, "0");
+
+
+    const random =
+        Math.floor(
+            100000 +
+            Math.random() * 900000
+        );
+
+
+    return `RM-${year}${month}${day}-${random}`;
+
+}
+
+
+// ======================================
+// ТОВАРЫ В ОФОРМЛЕНИИ
+// ======================================
+
+function renderCheckoutItems() {
+
+    const container =
+        document.getElementById("checkoutItems");
+
+
+    const totalElement =
+        document.getElementById("checkoutTotal");
+
+
+    container.innerHTML = "";
+
+
+    let total = 0;
+
+
+    cart.forEach(item => {
+
+        total += item.price;
+
+
+        container.innerHTML += `
+
+            <div class="checkout-item">
+
+                <span class="checkout-item-name">
+                    ${item.name}
+                </span>
+
+                <span class="checkout-item-price">
+                    ${formatPrice(item.price)} ₽
+                </span>
+
+            </div>
+
+        `;
+
+    });
+
+
+    totalElement.textContent =
+        formatPrice(total) + " ₽";
+
+}
+
+
+// ======================================
+// СОЗДАНИЕ ЗАКАЗА
+// ======================================
+
+function createOrder() {
+
+    const playerId =
+        document
+            .getElementById("checkoutPlayerId")
+            .value
+            .trim();
+
+
+    const paymentMethod =
+        document
+            .getElementById("paymentMethod")
+            .value;
+
+
+    const agreement =
+        document
+            .getElementById("agreement")
+            .checked;
+
+
+    const orderNumber =
+        document
+            .getElementById("orderNumber")
+            .textContent;
+
+
+    if (!playerId) {
+
+        alert(
+            "Введите игровой ID."
+        );
+
+        return;
+    }
+
+
+    if (!agreement) {
+
+        alert(
+            "Подтвердите правильность игрового ID."
+        );
+
+        return;
+    }
+
+
+    let total = 0;
+
+
+    cart.forEach(item => {
+        total += item.price;
+    });
+
+
+    // Сохраняем ID игрока
+
+    localStorage.setItem(
+        "rustPlayerId",
+        playerId
+    );
+
+
+    // Создаём объект заказа
+
+    const order = {
+
+        id: orderNumber,
+
+        playerId: playerId,
+
+        items: [...cart],
+
+        total: total,
+
+        paymentMethod: paymentMethod,
+
+        status: "Создан",
+
+        date: new Date().toISOString()
+
+    };
+
+
+    // Получаем старые заказы
+
+    let orders =
+        JSON.parse(
+            localStorage.getItem("rustOrders") || "[]"
+        );
+
+
+    // Добавляем новый заказ
+
+    orders.unshift(order);
+
+
+    // Сохраняем
+
+    localStorage.setItem(
+        "rustOrders",
+        JSON.stringify(orders)
+    );
+
+
+    // Показываем результат
+
+    document
+        .getElementById("successOrderNumber")
+        .textContent = orderNumber;
+
+
+    document
+        .getElementById("successPlayerId")
+        .textContent = playerId;
+
+
+    document
+        .getElementById("successTotal")
+        .textContent =
+            formatPrice(total) + " ₽";
+
+
+    // Обновляем список заказов
+
+    renderOrders();
+
+
+    // Очищаем корзину
+
+    cart = [];
+
+    updateCart();
+
+
+    closeModal("checkoutModal");
+
+    openModal("successModal");
+
+}
+
+
+// ======================================
+// КОПИРОВАНИЕ НОМЕРА
+// ======================================
+
+function copyOrderNumber() {
+
+    const number =
+        document
+            .getElementById("orderNumber")
+            .textContent;
+
+
+    navigator.clipboard
+        .writeText(number);
+
+
+    alert(
+        "Номер заказа скопирован."
+    );
+
+}
+
+
+function copySuccessOrder() {
+
+    const number =
+        document
+            .getElementById("successOrderNumber")
+            .textContent;
+
+
+    navigator.clipboard
+        .writeText(number);
+
+
+    alert(
+        "Номер заказа скопирован."
+    );
+
+}
+
+
+// ======================================
+// МОИ ЗАКАЗЫ
+// ======================================
+
+function renderOrders() {
+
+    const container =
+        document.getElementById("ordersList");
+
+
+    const orders =
+        JSON.parse(
+            localStorage.getItem("rustOrders") || "[]"
+        );
+
+
+    if (orders.length === 0) {
+
+        container.innerHTML = `
+            Заказов пока нет
+        `;
+
+        return;
+    }
+
+
+    container.innerHTML = "";
+
+
+    orders.forEach(order => {
+
+        const date =
+            new Date(order.date);
+
+
+        const dateText =
+            date.toLocaleString("ru-RU");
+
+
+        container.innerHTML += `
+
+            <div class="checkout-item">
+
+                <div>
+
+                    <div class="checkout-item-name">
+                        ${order.id}
+                    </div>
+
+                    <div
+                        style="
+                            color:#777;
+                            font-size:12px;
+                            margin-top:5px;
+                        "
+                    >
+                        ID: ${order.playerId}
+                        <br>
+                        ${dateText}
+                    </div>
+
+                </div>
+
+                <div>
+
+                    <div class="checkout-item-price">
+                        ${formatPrice(order.total)} ₽
+                    </div>
+
+                    <div
+                        style="
+                            color:#69b56f;
+                            font-size:12px;
+                            text-align:right;
+                            margin-top:5px;
+                        "
+                    >
+                        ${order.status}
+                    </div>
+
+                </div>
+
+            </div>
+
+        `;
+
+    });
+
+}
 
     const orderNumber =
         generateOrderNumber();
