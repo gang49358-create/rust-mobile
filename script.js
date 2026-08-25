@@ -11,7 +11,7 @@
         "https://script.google.com/macros/s/XXXXXXXX/exec";
 */
 
-const TELEGRAM_API = "";
+const https://script.google.com/macros/s/AKfycbwiX84qNk35rApQRrv3OZzvWVjXQhI_5tkuD5T9_ZnpqS_qKppVXANPfk55E04OBL04/exec = "";
 
 
 /* =========================================
