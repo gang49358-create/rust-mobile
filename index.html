@@ -524,7 +524,210 @@
 
 </main>
 
+<!-- ОФОРМЛЕНИЕ ЗАКАЗА -->
 
+<div id="checkoutModal" class="modal">
+
+    <div class="modal-box checkout-box">
+
+        <button
+            class="modal-close"
+            onclick="closeModal('checkoutModal')"
+        >
+            ×
+        </button>
+
+        <div class="checkout-header">
+            <div class="checkout-icon">
+                🧾
+            </div>
+
+            <div>
+                <h2>Оформление заказа</h2>
+                <p>Проверьте данные перед оплатой</p>
+            </div>
+        </div>
+
+
+        <!-- НОМЕР ЗАКАЗА -->
+
+        <div class="order-number-box">
+
+            <span>Номер заказа</span>
+
+            <strong id="orderNumber">
+                RM-00000000-000000
+            </strong>
+
+            <button onclick="copyOrderNumber()">
+                📋
+            </button>
+
+        </div>
+
+
+        <!-- ИГРОВОЙ ID -->
+
+        <div class="checkout-field">
+
+            <label>
+                🎮 Игровой ID
+            </label>
+
+            <input
+                id="checkoutPlayerId"
+                type="text"
+                placeholder="Введите игровой ID"
+            >
+
+        </div>
+
+
+        <!-- ТОВАРЫ -->
+
+        <div class="checkout-products">
+
+            <h3>
+                Ваш заказ
+            </h3>
+
+            <div id="checkoutItems"></div>
+
+        </div>
+
+
+        <!-- ИТОГО -->
+
+        <div class="checkout-total">
+
+            <span>
+                К оплате
+            </span>
+
+            <strong id="checkoutTotal">
+                0 ₽
+            </strong>
+
+        </div>
+
+
+        <!-- СПОСОБ ОПЛАТЫ -->
+
+        <div class="checkout-field">
+
+            <label>
+                💳 Способ оплаты
+            </label>
+
+            <select id="paymentMethod">
+
+                <option value="card">
+                    Банковская карта
+                </option>
+
+                <option value="sbp">
+                    СБП
+                </option>
+
+                <option value="crypto">
+                    Криптовалюта
+                </option>
+
+            </select>
+
+        </div>
+
+
+        <label class="agreement">
+
+            <input
+                type="checkbox"
+                id="agreement"
+            >
+
+            <span>
+                Я проверил игровой ID и согласен
+                с условиями заказа
+            </span>
+
+        </label>
+
+
+        <button
+            class="main-button"
+            onclick="createOrder()"
+        >
+            🔒 Создать заказ
+        </button>
+
+    </div>
+
+</div>
+
+
+<!-- ЗАКАЗ СОЗДАН -->
+
+<div id="successModal" class="modal">
+
+    <div class="modal-box success-box">
+
+        <div class="success-icon">
+            ✓
+        </div>
+
+        <h2>
+            Заказ создан!
+        </h2>
+
+        <p>
+            Сохраните номер заказа.
+        </p>
+
+        <div class="success-order">
+
+            <span>
+                Номер заказа
+            </span>
+
+            <strong id="successOrderNumber">
+                RM-00000000-000000
+            </strong>
+
+        </div>
+
+        <div class="success-info">
+
+            <div>
+                🎮
+                <span>Игровой ID</span>
+                <strong id="successPlayerId">—</strong>
+            </div>
+
+            <div>
+                💰
+                <span>Сумма</span>
+                <strong id="successTotal">0 ₽</strong>
+            </div>
+
+        </div>
+
+        <button
+            class="main-button"
+            onclick="copySuccessOrder()"
+        >
+            📋 Скопировать номер
+        </button>
+
+        <button
+            class="secondary-button"
+            onclick="closeModal('successModal')"
+        >
+            Вернуться в магазин
+        </button>
+
+    </div>
+
+</div>
 <!-- НИЖНЕЕ МЕНЮ -->
 
 <nav class="bottom-nav">
