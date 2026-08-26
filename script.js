@@ -1711,7 +1711,23 @@ function renderOrders() {
                         🕐 ${date}
 
                     </div>
-
+${
+    order.reviewed
+    ? `
+        <div class="review-done">
+            ⭐ Отзыв уже оставлен
+        </div>
+    `
+    : `
+        <button
+            type="button"
+            class="review-order-button"
+            onclick="openReview(${orders.indexOf(order)})"
+        >
+            ⭐ Оставить отзыв
+        </button>
+    `
+}
                 </div>
 
             `;
