@@ -2520,3 +2520,193 @@ footer button {
     }
 
 }
+/* =========================================
+   ADMIN LOGIN
+========================================= */
+
+.profile-admin-button {
+
+    width: 100%;
+    margin-top: 12px;
+    padding: 13px 16px;
+
+    border: 1px solid rgba(255,255,255,0.08);
+    border-radius: 12px;
+
+    background: rgba(255,255,255,0.05);
+
+    color: white;
+
+    font-size: 14px;
+    font-weight: 600;
+
+    cursor: pointer;
+}
+
+
+.admin-login {
+
+    position: relative;
+
+    width: min(400px, 90vw);
+
+    padding: 30px;
+
+    box-sizing: border-box;
+
+    border-radius: 22px;
+
+    background:
+        linear-gradient(
+            145deg,
+            #1c1c1c,
+            #0e0e0e
+        );
+
+    border: 1px solid
+        rgba(255,255,255,0.08);
+
+    box-shadow:
+        0 30px 80px
+        rgba(0,0,0,0.7);
+
+    color: white;
+
+    text-align: center;
+}
+
+
+.admin-login-icon {
+
+    width: 64px;
+    height: 64px;
+
+    margin: 0 auto 16px;
+
+    display: flex;
+
+    align-items: center;
+    justify-content: center;
+
+    border-radius: 18px;
+
+    background:
+        rgba(255,255,255,0.07);
+
+    font-size: 30px;
+}
+
+
+.admin-login h2 {
+
+    margin: 0 0 7px;
+
+    font-size: 24px;
+}
+
+
+.admin-login p {
+
+    margin: 0 0 22px;
+
+    color: #777;
+
+    font-size: 14px;
+}
+
+
+.admin-login input {
+
+    display: block;
+
+    width: 100%;
+
+    box-sizing: border-box;
+
+    margin-bottom: 11px;
+
+    padding: 14px;
+
+    border: 1px solid
+        rgba(255,255,255,0.08);
+
+    border-radius: 12px;
+
+    outline: none;
+
+    background:
+        rgba(255,255,255,0.05);
+
+    color: white;
+
+    font-size: 15px;
+}
+
+
+.admin-login input::placeholder {
+    color: #777;
+}
+
+
+.admin-login-button {
+
+    width: 100%;
+
+    margin-top: 7px;
+
+    padding: 14px;
+
+    border: 0;
+
+    border-radius: 12px;
+
+    background:
+        linear-gradient(
+            135deg,
+            #ffbd00,
+            #ff7900
+        );
+
+    color: #111;
+
+    font-weight: 800;
+
+    cursor: pointer;
+}
+
+
+.admin-login-error {
+
+    min-height: 18px;
+
+    margin: 5px 0;
+
+    color: #ff6565;
+
+    font-size: 13px;
+}
+
+
+.admin-close {
+
+    position: absolute;
+
+    top: 13px;
+    right: 13px;
+
+    width: 35px;
+    height: 35px;
+
+    border: 0;
+
+    border-radius: 50%;
+
+    background:
+        rgba(255,255,255,0.06);
+
+    color: white;
+
+    font-size: 23px;
+
+    cursor: pointer;
+}
