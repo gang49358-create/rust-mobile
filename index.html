@@ -837,7 +837,113 @@
 
 
     <script src="script.js"></script>
+<!-- =========================================
+     ADMIN PANEL — AKASHISK8
+========================================= -->
 
+<div id="adminModal" class="modal">
+
+    <div class="admin-panel">
+
+        <button
+            class="admin-close"
+            type="button"
+            onclick="closeModal('adminModal')"
+        >
+            ×
+        </button>
+
+        <div class="admin-header">
+
+            <div class="admin-avatar">
+                A
+            </div>
+
+            <div>
+                <div class="admin-title">
+                    AkashiSK8
+                </div>
+
+                <div class="admin-subtitle">
+                    Панель администратора
+                </div>
+            </div>
+
+        </div>
+
+
+        <div class="admin-stats">
+
+            <div class="admin-stat">
+                <span>📦 Всего</span>
+                <strong id="adminTotalOrders">
+                    0
+                </strong>
+            </div>
+
+            <div class="admin-stat">
+                <span>🆕 Новые</span>
+                <strong id="adminNewOrders">
+                    0
+                </strong>
+            </div>
+
+            <div class="admin-stat">
+                <span>💳 Оплата</span>
+                <strong id="adminWaitingOrders">
+                    0
+                </strong>
+            </div>
+
+            <div class="admin-stat">
+                <span>✅ Выполнены</span>
+                <strong id="adminCompletedOrders">
+                    0
+                </strong>
+            </div>
+
+        </div>
+
+
+        <div class="admin-orders-header">
+
+            <h3>
+                Заказы
+            </h3>
+
+            <button
+                type="button"
+                onclick="refreshAdminOrders()"
+            >
+                🔄 Обновить
+            </button>
+
+        </div>
+
+
+        <div
+            id="adminOrdersList"
+            class="admin-orders-list"
+        >
+
+            <div class="admin-empty">
+                Заказов пока нет
+            </div>
+
+        </div>
+
+
+        <button
+            type="button"
+            class="admin-clear-button"
+            onclick="clearAdminOrders()"
+        >
+            🗑 Очистить историю заказов
+        </button>
+
+    </div>
+
+</div>
 </body>
 
 </html>
