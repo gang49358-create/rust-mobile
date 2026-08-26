@@ -1,8 +1,15 @@
 <!DOCTYPE html>
 <html lang="ru">
+
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0, maximum-scale=1.0"
+    >
+
+    <meta name="theme-color" content="#120906">
 
     <title>RUST MOBILE SHOP 🇨🇳</title>
 
@@ -18,37 +25,90 @@
 
 <div class="background"></div>
 
-<!-- HEADER -->
+<!-- ================= HEADER ================= -->
+
 <header class="header">
+
     <div class="header-inner">
 
-        <a class="logo" href="#" onclick="scrollToSection('shop')">
-            <div class="logo-icon">⚡</div>
+        <button
+            class="brand"
+            onclick="scrollToSection('shop')"
+        >
 
-            <div>
-                <div class="logo-title">RUST MOBILE</div>
-                <div class="logo-subtitle">SHOP 🇨🇳</div>
+            <div class="brand-icon">
+                ⚡
             </div>
-        </a>
 
-        <nav class="desktop-nav">
-            <button onclick="scrollToSection('shop')">🛒 Магазин</button>
-            <button onclick="openProfile()">👤 Профиль</button>
-            <button onclick="openOrders()">📋 Заказы</button>
-            <button onclick="openFAQ()">❓ FAQ</button>
-            <button onclick="openSupport()">💬 Поддержка</button>
-        </nav>
+            <div class="brand-text">
 
-        <button class="cart-button" onclick="openCart()">
-            🛒
-            <span id="cartCount">0</span>
+                <strong>
+                    RUST MOBILE
+                </strong>
+
+                <span>
+                    SHOP 🇨🇳
+                </span>
+
+            </div>
+
         </button>
 
+
+        <nav class="desktop-nav">
+
+            <button onclick="scrollToSection('shop')">
+                🛒 Магазин
+            </button>
+
+            <button onclick="openProfile()">
+                👤 Профиль
+            </button>
+
+            <button onclick="openOrders()">
+                📋 Заказы
+            </button>
+
+            <button onclick="openSupport()">
+                💬 Поддержка
+            </button>
+
+        </nav>
+
+
+        <div class="header-actions">
+
+            <button
+                class="profile-button"
+                onclick="openProfile()"
+                title="Профиль"
+            >
+                👤
+            </button>
+
+
+            <button
+                class="cart-button"
+                onclick="openCart()"
+            >
+
+                🛒
+
+                <span id="cartCount">
+                    0
+                </span>
+
+            </button>
+
+        </div>
+
     </div>
+
 </header>
 
 
-<!-- HERO -->
+<!-- ================= HERO ================= -->
+
 <main>
 
 <section class="hero">
@@ -66,8 +126,9 @@
 
         <p>
             Монеты, Battle Pass и специальные предложения.
-            Красивое и быстрое оформление заказа.
+            Быстрое и удобное оформление заказа.
         </p>
+
 
         <div class="hero-buttons">
 
@@ -86,6 +147,7 @@
             </button>
 
         </div>
+
 
         <div class="advantages">
 
@@ -108,37 +170,50 @@
 
     </div>
 
-    <div class="hero-coins">
-        <div class="coin coin-big">✦</div>
-        <div class="coin coin-medium">✦</div>
-        <div class="coin coin-small">✦</div>
-        <div class="coin coin-small coin-four">✦</div>
+
+    <div class="hero-visual">
+
+        <div class="floating-coin coin-1">✦</div>
+        <div class="floating-coin coin-2">✦</div>
+        <div class="floating-coin coin-3">✦</div>
 
         <div class="coin-stack">
-            <div></div>
-            <div></div>
-            <div></div>
-            <div></div>
+
+            <span></span>
+            <span></span>
+            <span></span>
+            <span></span>
+
         </div>
+
     </div>
 
 </section>
 
 
-<!-- SHOP -->
-<section class="shop-section" id="shop">
+<!-- ================= SHOP ================= -->
+
+<section
+    class="shop-section"
+    id="shop"
+>
 
     <div class="section-title">
 
-        <span>🛒 МАГАЗИН</span>
+        <span>
+            🛒 МАГАЗИН
+        </span>
 
-        <h2>Выбери категорию</h2>
+        <h2>
+            Выбери категорию
+        </h2>
 
         <p>
             Выберите товар и добавьте его в корзину.
         </p>
 
     </div>
+
 
     <div class="categories">
 
@@ -165,66 +240,100 @@
 
     </div>
 
+
+    <!-- SEARCH -->
+
+    <div class="shop-tools">
+
+        <div class="search-box">
+
+            <span>
+                🔎
+            </span>
+
+            <input
+                id="productSearch"
+                type="search"
+                placeholder="Поиск товара..."
+                oninput="filterProducts()"
+            >
+
+        </div>
+
+
+        <select
+            id="sortProducts"
+            onchange="filterProducts()"
+        >
+
+            <option value="default">
+                Сортировка
+            </option>
+
+            <option value="cheap">
+                Сначала дешёвые
+            </option>
+
+            <option value="expensive">
+                Сначала дорогие
+            </option>
+
+        </select>
+
+    </div>
+
+
     <div
-        class="products"
         id="products"
+        class="products"
     ></div>
 
 </section>
 
 
-<!-- FEATURES -->
-<section class="features-section">
+<!-- ================= POPULAR ================= -->
 
-    <div class="feature-card">
-        <div class="feature-icon">⚡</div>
-        <h3>Быстрое оформление</h3>
-        <p>
-            Выбираете товар, оформляете заказ
-            и переходите к продавцу.
-        </p>
+<section class="popular-section">
+
+    <div class="section-title">
+
+        <span>
+            🏆 ПОПУЛЯРНОЕ
+        </span>
+
+        <h2>
+            Чаще всего покупают
+        </h2>
+
     </div>
 
-    <div class="feature-card">
-        <div class="feature-icon">🧾</div>
-        <h3>Номер заказа</h3>
-        <p>
-            Каждый заказ получает уникальный номер.
-        </p>
-    </div>
 
-    <div class="feature-card">
-        <div class="feature-icon">📱</div>
-        <h3>Telegram</h3>
-        <p>
-            После оформления можно сразу связаться
-            с продавцом.
-        </p>
-    </div>
+    <div class="popular-card">
 
-</section>
-
-
-<!-- PROMO -->
-<section class="promo-section">
-
-    <div class="promo-card">
+        <div class="popular-icon">
+            🔥
+        </div>
 
         <div>
-            <span class="promo-label">🔥 СПЕЦИАЛЬНОЕ ПРЕДЛОЖЕНИЕ</span>
 
-            <h2>Скидки на популярные наборы</h2>
+            <span>
+                Хит продаж
+            </span>
 
-            <p>
-                Успей воспользоваться акционными товарами.
-            </p>
+            <h3>
+                1400 монет
+            </h3>
+
+            <strong>
+                2240 ₽
+            </strong>
+
         </div>
 
         <button
-            class="main-button"
-            onclick="showCategory('promotions', document.querySelectorAll('.category')[2]); scrollToSection('shop')"
+            onclick="addToCart('coins-1400')"
         >
-            🔥 Смотреть акции
+            🛒 Купить
         </button>
 
     </div>
@@ -232,82 +341,60 @@
 </section>
 
 
-<!-- INFO -->
+<!-- ================= INFO ================= -->
+
 <section class="info-section">
 
     <div class="info-card">
-        <div class="info-icon">🛒</div>
 
-        <h3>1. Выберите товар</h3>
+        <div class="info-icon">
+            🎮
+        </div>
+
+        <h3>
+            Как купить?
+        </h3>
 
         <p>
-            Добавьте нужные товары в корзину.
+            Выберите товар, добавьте его в корзину
+            и оформите заказ.
         </p>
+
     </div>
+
 
     <div class="info-card">
-        <div class="info-icon">🧾</div>
 
-        <h3>2. Создайте заказ</h3>
+        <div class="info-icon">
+            ⚡
+        </div>
+
+        <h3>
+            Быстрое оформление
+        </h3>
 
         <p>
-            Укажите почту или WeChat ID и способ оплаты.
+            После создания заказа вы получите
+            уникальный номер.
         </p>
+
     </div>
+
 
     <div class="info-card">
-        <div class="info-icon">💬</div>
 
-        <h3>3. Свяжитесь с продавцом</h3>
+        <div class="info-icon">
+            💬
+        </div>
+
+        <h3>
+            Поддержка
+        </h3>
 
         <p>
-            После оформления откроется Telegram.
+            Возникли проблемы?
+            Напишите продавцу.
         </p>
-    </div>
-
-</section>
-
-
-<!-- FAQ -->
-<section class="faq-section" id="faq">
-
-    <div class="section-title">
-        <span>❓ FAQ</span>
-        <h2>Частые вопросы</h2>
-    </div>
-
-    <div class="faq-list">
-
-        <details>
-            <summary>Как оформить заказ?</summary>
-            <p>
-                Выберите товар, добавьте его в корзину,
-                заполните контакт и создайте заказ.
-            </p>
-        </details>
-
-        <details>
-            <summary>Где посмотреть номер заказа?</summary>
-            <p>
-                Номер появляется после оформления заказа
-                и сохраняется в разделе «Заказы».
-            </p>
-        </details>
-
-        <details>
-            <summary>Как связаться с продавцом?</summary>
-            <p>
-                После создания заказа можно открыть Telegram
-                продавца с готовым текстом заказа.
-            </p>
-        </details>
-
-        <details>
-            <summary>Можно ли посмотреть старые заказы?</summary>
-            <p>
-                Да. Откройте раздел «Профиль» → «Мои заказы».
-            </p>
-        </details>
 
     </div>
 
@@ -316,7 +403,8 @@
 </main>
 
 
-<!-- FOOTER -->
+<!-- ================= FOOTER ================= -->
+
 <footer>
 
     <div class="footer-logo">
@@ -331,15 +419,21 @@
         💬 Написать в поддержку
     </button>
 
-    <div class="created-by">
-        Создал сайт <strong>AkashiSK8</strong>
+    <div class="creator">
+        Создал сайт — <strong>AkashiSK8</strong>
     </div>
 
 </footer>
 
 
-<!-- CART -->
-<div class="modal" id="cartModal">
+<!-- =====================================================
+     CART
+===================================================== -->
+
+<div
+    class="modal"
+    id="cartModal"
+>
 
     <div class="modal-box">
 
@@ -350,22 +444,93 @@
             ×
         </button>
 
-        <h2>🛒 Корзина</h2>
+        <h2>
+            🛒 Корзина
+        </h2>
+
 
         <div
             id="cartItems"
             class="cart-items"
         ></div>
 
-        <div class="cart-total">
 
-            <span>Итого</span>
+        <!-- PROMOCODE -->
 
-            <strong id="cartTotal">
-                0 ₽
-            </strong>
+        <div class="promo-box">
+
+            <label>
+                🏷️ Промокод
+            </label>
+
+            <div class="promo-row">
+
+                <input
+                    id="promoInput"
+                    type="text"
+                    placeholder="Введите промокод"
+                    autocomplete="off"
+                >
+
+                <button
+                    onclick="applyPromo()"
+                >
+                    Применить
+                </button>
+
+            </div>
+
+            <div
+                id="promoMessage"
+                class="promo-message"
+            ></div>
 
         </div>
+
+
+        <div class="cart-summary">
+
+            <div>
+                <span>
+                    Товары
+                </span>
+
+                <strong id="cartSubtotal">
+                    0 ₽
+                </strong>
+            </div>
+
+
+            <div
+                id="discountRow"
+                class="discount-row hidden"
+            >
+
+                <span>
+                    Скидка
+                </span>
+
+                <strong id="cartDiscount">
+                    -0 ₽
+                </strong>
+
+            </div>
+
+
+            <div class="cart-total">
+
+                <span>
+                    Итого
+                </span>
+
+                <strong id="cartTotal">
+                    0 ₽
+                </strong>
+
+            </div>
+
+        </div>
+
 
         <button
             class="main-button full"
@@ -379,8 +544,14 @@
 </div>
 
 
-<!-- CHECKOUT -->
-<div class="modal" id="checkoutModal">
+<!-- =====================================================
+     CHECKOUT
+===================================================== -->
+
+<div
+    class="modal"
+    id="checkoutModal"
+>
 
     <div class="modal-box checkout-box">
 
@@ -391,16 +562,23 @@
             ×
         </button>
 
+
         <div class="checkout-header">
 
-            <div class="checkout-icon">🧾</div>
+            <div class="checkout-icon">
+                🧾
+            </div>
 
             <div>
-                <h2>Оформление заказа</h2>
+
+                <h2>
+                    Оформление заказа
+                </h2>
 
                 <p>
-                    Проверьте данные перед созданием заказа
+                    Проверьте данные перед созданием заказа.
                 </p>
+
             </div>
 
         </div>
@@ -409,11 +587,15 @@
         <div class="order-number-box">
 
             <div>
-                <span>Номер заказа</span>
+
+                <span>
+                    Номер заказа
+                </span>
 
                 <strong id="orderNumber">
                     RM-00000000-000000
                 </strong>
+
             </div>
 
             <button onclick="copyOrderNumber()">
@@ -423,10 +605,46 @@
         </div>
 
 
-        <!-- CONTACT -->
+        <div class="checkout-products">
+
+            <h3>
+                Ваш заказ
+            </h3>
+
+            <div id="checkoutItems"></div>
+
+        </div>
+
+
+        <div class="checkout-discount">
+
+            <span>
+                Скидка
+            </span>
+
+            <strong id="checkoutDiscount">
+                0 ₽
+            </strong>
+
+        </div>
+
+
+        <div class="checkout-total">
+
+            <span>
+                К оплате
+            </span>
+
+            <strong id="checkoutTotal">
+                0 ₽
+            </strong>
+
+        </div>
+
+
         <div class="checkout-field">
 
-            <label for="checkoutContact">
+            <label>
                 📧 Почта / WeChat ID
             </label>
 
@@ -440,32 +658,25 @@
         </div>
 
 
-        <!-- ITEMS -->
-        <div class="checkout-products">
-
-            <h3>Ваш заказ</h3>
-
-            <div id="checkoutItems"></div>
-
-        </div>
-
-
-        <!-- TOTAL -->
-        <div class="checkout-total">
-
-            <span>К оплате</span>
-
-            <strong id="checkoutTotal">
-                0 ₽
-            </strong>
-
-        </div>
-
-
-        <!-- PAYMENT -->
         <div class="checkout-field">
 
-            <label for="paymentMethod">
+            <label>
+                📝 Комментарий
+            </label>
+
+            <textarea
+                id="checkoutComment"
+                rows="3"
+                maxlength="500"
+                placeholder="Комментарий к заказу..."
+            ></textarea>
+
+        </div>
+
+
+        <div class="checkout-field">
+
+            <label>
                 💳 Способ оплаты
             </label>
 
@@ -488,7 +699,6 @@
         </div>
 
 
-        <!-- AGREEMENT -->
         <label class="agreement">
 
             <input
@@ -497,8 +707,7 @@
             >
 
             <span>
-                Я проверил указанные данные и согласен
-                с условиями заказа.
+                Я проверил данные и согласен с условиями заказа.
             </span>
 
         </label>
@@ -508,7 +717,7 @@
             class="main-button full"
             onclick="createOrder()"
         >
-            🚀 Создать заказ
+            🔒 Создать заказ
         </button>
 
     </div>
@@ -516,8 +725,14 @@
 </div>
 
 
-<!-- SUCCESS -->
-<div class="modal" id="successModal">
+<!-- =====================================================
+     SUCCESS
+===================================================== -->
+
+<div
+    class="modal"
+    id="successModal"
+>
 
     <div class="modal-box success-box">
 
@@ -525,15 +740,20 @@
             ✓
         </div>
 
-        <h2>Заказ создан!</h2>
+        <h2>
+            Заказ создан!
+        </h2>
 
         <p>
             Сохраните номер заказа.
         </p>
 
+
         <div class="success-order">
 
-            <span>Номер заказа</span>
+            <span>
+                Номер заказа
+            </span>
 
             <strong id="successOrderNumber">
                 —
@@ -541,39 +761,54 @@
 
         </div>
 
+
         <div class="success-info">
 
             <div>
-                <span>📧 Контакт</span>
+
+                <span>
+                    📧 Контакт
+                </span>
 
                 <strong id="successContact">
                     —
                 </strong>
+
             </div>
 
+
             <div>
-                <span>💰 Сумма</span>
+
+                <span>
+                    💰 Сумма
+                </span>
 
                 <strong id="successTotal">
                     0 ₽
                 </strong>
+
             </div>
 
         </div>
 
-        <button
-            class="main-button full"
-            onclick="openLastTelegramOrder()"
-        >
-            📱 Открыть Telegram
-        </button>
 
         <button
-            class="secondary-button full"
+            class="main-button full"
             onclick="copySuccessOrder()"
         >
             📋 Скопировать номер
         </button>
+
+
+        <a
+            id="successTelegram"
+            class="telegram-button full"
+            href="#"
+            target="_blank"
+        >
+            ✈️ Открыть Telegram
+        </a>
+
 
         <button
             class="secondary-button full"
@@ -587,10 +822,16 @@
 </div>
 
 
-<!-- PROFILE -->
-<div class="modal" id="profileModal">
+<!-- =====================================================
+     PROFILE
+===================================================== -->
 
-    <div class="modal-box">
+<div
+    class="modal"
+    id="profileModal"
+>
+
+    <div class="modal-box profile-box">
 
         <button
             class="modal-close"
@@ -599,48 +840,67 @@
             ×
         </button>
 
+
         <div class="profile-avatar">
             👤
         </div>
 
-        <h2>Твой профиль</h2>
+        <h2>
+            Мой профиль
+        </h2>
 
-        <div class="profile-card">
+        <p class="profile-subtitle">
+            Ваша история покупок хранится на этом устройстве.
+        </p>
 
-            <div>
-                📧
-                <span>Контакт</span>
 
-                <strong id="profileContact">
-                    Не указан
-                </strong>
-            </div>
+        <div class="profile-stats">
 
             <div>
-                📦
-                <span>Всего заказов</span>
-
+                <span>📦</span>
                 <strong id="profileOrders">
                     0
                 </strong>
+                <small>
+                    Заказов
+                </small>
             </div>
 
-            <div>
-                💰
-                <span>Потрачено</span>
 
+            <div>
+                <span>💰</span>
                 <strong id="profileSpent">
                     0 ₽
                 </strong>
+                <small>
+                    Потрачено
+                </small>
             </div>
 
         </div>
+
 
         <button
             class="main-button full"
             onclick="openOrders()"
         >
-            📋 Мои заказы
+            📋 История заказов
+        </button>
+
+
+        <button
+            class="admin-login-button full"
+            onclick="openAdminLogin()"
+        >
+            👑 Вход в админ-панель
+        </button>
+
+
+        <button
+            class="secondary-button full"
+            onclick="closeModal('profileModal')"
+        >
+            Закрыть
         </button>
 
     </div>
@@ -648,8 +908,14 @@
 </div>
 
 
-<!-- ORDERS -->
-<div class="modal" id="ordersModal">
+<!-- =====================================================
+     ORDERS
+===================================================== -->
+
+<div
+    class="modal"
+    id="ordersModal"
+>
 
     <div class="modal-box orders-box">
 
@@ -660,7 +926,10 @@
             ×
         </button>
 
-        <h2>📋 Мои заказы</h2>
+        <h2>
+            📋 История заказов
+        </h2>
+
 
         <div
             id="ordersList"
@@ -672,8 +941,14 @@
 </div>
 
 
-<!-- SUPPORT -->
-<div class="modal" id="supportModal">
+<!-- =====================================================
+     SUPPORT
+===================================================== -->
+
+<div
+    class="modal"
+    id="supportModal"
+>
 
     <div class="modal-box">
 
@@ -684,42 +959,52 @@
             ×
         </button>
 
+
         <div class="support-icon">
             💬
         </div>
 
-        <h2>Поддержка</h2>
+        <h2>
+            Поддержка
+        </h2>
 
         <p class="support-text">
-            По всем вопросам обращайтесь
-            к нашей поддержке.
+            По всем вопросам обращайтесь к продавцу.
         </p>
 
-        <div class="support-card">
-            <span>👤 Поддержка</span>
 
-            <a
-                href="https://t.me/luxanixx"
-                target="_blank"
-            >
+        <div class="support-card">
+
+            <span>
+                👤 Поддержка
+            </span>
+
+            <strong>
                 @luxanixx
-            </a>
+            </strong>
+
         </div>
 
+
         <div class="support-card">
-            <span>⏱ Время ответа</span>
+
+            <span>
+                ⏱ Время ответа
+            </span>
 
             <strong>
                 до 20 минут
             </strong>
+
         </div>
+
 
         <a
             class="main-button full support-link"
             href="https://t.me/luxanixx"
             target="_blank"
         >
-            ✉️ Написать продавцу
+            ✈️ Написать продавцу
         </a>
 
     </div>
@@ -727,7 +1012,250 @@
 </div>
 
 
-<!-- SCRIPT -->
+<!-- =====================================================
+     ADMIN LOGIN
+===================================================== -->
+
+<div
+    class="modal"
+    id="adminLoginModal"
+>
+
+    <div class="modal-box admin-login-box">
+
+        <button
+            class="modal-close"
+            onclick="closeModal('adminLoginModal')"
+        >
+            ×
+        </button>
+
+
+        <div class="admin-login-icon">
+            👑
+        </div>
+
+        <h2>
+            Админ-панель
+        </h2>
+
+        <p>
+            Вход только для администратора.
+        </p>
+
+
+        <div class="checkout-field">
+
+            <label>
+                👤 Логин
+            </label>
+
+            <input
+                id="adminLogin"
+                type="text"
+                placeholder="Введите логин"
+                autocomplete="off"
+            >
+
+        </div>
+
+
+        <div class="checkout-field">
+
+            <label>
+                🔐 Пароль
+            </label>
+
+            <input
+                id="adminPassword"
+                type="password"
+                placeholder="Введите пароль"
+            >
+
+        </div>
+
+
+        <div
+            id="adminLoginError"
+            class="admin-error"
+        ></div>
+
+
+        <button
+            class="main-button full"
+            onclick="loginAdmin()"
+        >
+            🔓 Войти
+        </button>
+
+    </div>
+
+</div>
+
+
+<!-- =====================================================
+     ADMIN PANEL
+===================================================== -->
+
+<div
+    class="modal"
+    id="adminModal"
+>
+
+    <div class="modal-box admin-panel">
+
+        <button
+            class="modal-close"
+            onclick="closeModal('adminModal')"
+        >
+            ×
+        </button>
+
+
+        <div class="admin-header">
+
+            <div class="admin-avatar">
+                A
+            </div>
+
+            <div>
+
+                <h2>
+                    AkashiSK8
+                </h2>
+
+                <p>
+                    Панель администратора
+                </p>
+
+            </div>
+
+        </div>
+
+
+        <div class="admin-stats">
+
+            <div>
+                <span>📦</span>
+                <strong id="adminTotalOrders">
+                    0
+                </strong>
+                <small>
+                    Всего
+                </small>
+            </div>
+
+
+            <div>
+                <span>🆕</span>
+                <strong id="adminNewOrders">
+                    0
+                </strong>
+                <small>
+                    Новые
+                </small>
+            </div>
+
+
+            <div>
+                <span>💰</span>
+                <strong id="adminSales">
+                    0 ₽
+                </strong>
+                <small>
+                    Продажи
+                </small>
+            </div>
+
+
+            <div>
+                <span>✅</span>
+                <strong id="adminCompletedOrders">
+                    0
+                </strong>
+                <small>
+                    Выполнены
+                </small>
+            </div>
+
+        </div>
+
+
+        <div class="admin-tools">
+
+            <input
+                id="adminSearch"
+                type="search"
+                placeholder="🔎 Поиск заказа..."
+                oninput="renderAdminOrders()"
+            >
+
+
+            <select
+                id="adminStatusFilter"
+                onchange="renderAdminOrders()"
+            >
+
+                <option value="all">
+                    Все статусы
+                </option>
+
+                <option value="Новый">
+                    Новый
+                </option>
+
+                <option value="Ожидает оплаты">
+                    Ожидает оплаты
+                </option>
+
+                <option value="Оплачен">
+                    Оплачен
+                </option>
+
+                <option value="Выполнен">
+                    Выполнен
+                </option>
+
+                <option value="Отменён">
+                    Отменён
+                </option>
+
+            </select>
+
+        </div>
+
+
+        <div class="admin-orders-header">
+
+            <h3>
+                Заказы
+            </h3>
+
+            <button onclick="refreshAdminOrders()">
+                🔄 Обновить
+            </button>
+
+        </div>
+
+
+        <div
+            id="adminOrdersList"
+            class="admin-orders-list"
+        ></div>
+
+
+        <button
+            class="admin-clear-button"
+            onclick="clearAdminOrders()"
+        >
+            🗑 Очистить историю
+        </button>
+
+    </div>
+
+</div>
+
+
 <script src="script.js"></script>
 
 </body>
