@@ -1495,3 +1495,535 @@ function showToast(message) {
 
     }, 2200);
 }
+/* =========================================
+   AKASHISK8 ADMIN
+========================================= */
+
+function openAdminPanel() {
+
+    renderAdminOrders();
+
+    openModal("adminModal");
+
+}
+
+
+function refreshAdminOrders() {
+
+    renderAdminOrders();
+
+    showToast(
+        "Заказы обновлены"
+    );
+
+}
+
+
+function getAdminOrders() {
+
+    const orders =
+        JSON.parse(
+            localStorage.getItem(
+                "rustOrders"
+            ) || "[]"
+        );
+
+    return Array.isArray(orders)
+        ? orders
+        : [];
+
+}
+
+
+function renderAdminOrders() {
+
+    const orders =
+        getAdminOrders();
+
+
+    const totalElement =
+        document.getElementById(
+            "adminTotalOrders"
+        );
+
+    const newElement =
+        document.getElementById(
+            "adminNewOrders"
+        );
+
+    const waitingElement =
+        document.getElementById(
+            "adminWaitingOrders"
+        );
+
+    const completedElement =
+        document.getElementById(
+            "adminCompletedOrders"
+        );
+
+
+    const list =
+        document.getElementById(
+            "adminOrdersList"
+        );
+
+
+    if (!list) {
+        return;
+    }
+
+
+    const newCount =
+        orders.filter(order =>
+            order.status === "Новый"
+        ).length;
+
+
+    const waitingCount =
+        orders.filter(order =>
+            order.status === "Ожидает оплаты"
+        ).length;
+
+
+    const completedCount =
+        orders.filter(order =>
+            order.status === "Выполнен"
+        ).length;
+
+
+    if (totalElement) {
+        totalElement.textContent =
+            orders.length;
+    }
+
+    if (newElement) {
+        newElement.textContent =
+            newCount;
+    }
+
+    if (waitingElement) {
+        waitingElement.textContent =
+            waitingCount;
+    }
+
+    if (completedElement) {
+        completedElement.textContent =
+            completedCount;
+    }
+
+
+    if (!orders.length) {
+
+        list.innerHTML = `
+            <div class="admin-empty">
+                📦
+                <br><br>
+                Заказов пока нет
+            </div>
+        `;
+
+        return;
+    }
+
+
+    list.innerHTML = "";
+
+
+    orders.forEach(
+        (order, index) => {
+
+            const date =
+                new Date(order.date)
+                    .toLocaleString(
+                        "ru-RU"
+                    );
+
+
+            const items =
+                Array.isArray(order.items)
+                    ? order.items
+                        .map(item =>
+                            escapeHTML(
+                                item.name
+                            )
+                        )
+                        .join(", ")
+                    : "—";
+
+
+            list.innerHTML += `
+
+                <div class="admin-order">
+
+                    <div class="admin-order-top">
+
+                        <span
+                            class="admin-order-number"
+                        >
+                            ${escapeHTML(
+                                order.id ||
+                                order.orderNumber ||
+                                "Без номера"
+                            )}
+                        </span>
+
+
+                        <span
+                            class="admin-order-status"
+                        >
+                            ${escapeHTML(
+                                order.status ||
+                                "Новый"
+                            )}
+                        </span>
+
+                    </div>
+
+
+                    <div class="admin-order-info">
+
+                        <div>
+                            📦
+                            <strong>
+                                Товар:
+                            </strong>
+
+                            ${items}
+                        </div>
+
+
+                        <div>
+                            💰
+                            <strong>
+                                Сумма:
+                            </strong>
+
+                            ${formatPrice(
+                                order.total
+                            )} ₽
+                        </div>
+
+
+                        <div>
+                            📧
+                            <strong>
+                                WeChat:
+                            </strong>
+
+                            ${escapeHTML(
+                                order.contact ||
+                                "Не указан"
+                            )}
+                        </div>
+
+
+                        <div>
+                            🕐
+                            <strong>
+                                Дата:
+                            </strong>
+
+                            ${date}
+                        </div>
+
+                    </div>
+
+
+                    <div
+                        class="admin-order-actions"
+                    >
+
+                        <select
+                            onchange="
+                                changeOrderStatus(
+                                    ${index},
+                                    this.value
+                                )
+                            "
+                        >
+
+                            <option
+                                value="Новый"
+                                ${
+                                    order.status ===
+                                    "Новый"
+                                    ? "selected"
+                                    : ""
+                                }
+                            >
+                                Новый
+                            </option>
+
+                            <option
+                                value="Ожидает оплаты"
+                                ${
+                                    order.status ===
+                                    "Ожидает оплаты"
+                                    ? "selected"
+                                    : ""
+                                }
+                            >
+                                Ожидает оплаты
+                            </option>
+
+                            <option
+                                value="Оплачен"
+                                ${
+                                    order.status ===
+                                    "Оплачен"
+                                    ? "selected"
+                                    : ""
+                                }
+                            >
+                                Оплачен
+                            </option>
+
+                            <option
+                                value="Выполнен"
+                                ${
+                                    order.status ===
+                                    "Выполнен"
+                                    ? "selected"
+                                    : ""
+                                }
+                            >
+                                Выполнен
+                            </option>
+
+                            <option
+                                value="Отменён"
+                                ${
+                                    order.status ===
+                                    "Отменён"
+                                    ? "selected"
+                                    : ""
+                                }
+                            >
+                                Отменён
+                            </option>
+
+                        </select>
+
+
+                        <button
+                            type="button"
+                            onclick="
+                                copyText(
+                                    '${escapeJS(
+                                        order.id ||
+                                        order.orderNumber ||
+                                        ""
+                                    )}'
+                                )
+                            "
+                        >
+                            📋 Номер
+                        </button>
+
+
+                        <button
+                            type="button"
+                            onclick="
+                                deleteAdminOrder(
+                                    ${index}
+                                )
+                            "
+                        >
+                            🗑 Удалить
+                        </button>
+
+                    </div>
+
+                </div>
+
+            `;
+
+        }
+    );
+
+}
+
+
+/* =========================================
+   CHANGE STATUS
+========================================= */
+
+function changeOrderStatus(
+    index,
+    status
+) {
+
+    const orders =
+        getAdminOrders();
+
+
+    if (
+        index < 0 ||
+        index >= orders.length
+    ) {
+        return;
+    }
+
+
+    orders[index].status =
+        status;
+
+
+    localStorage.setItem(
+        "rustOrders",
+        JSON.stringify(orders)
+    );
+
+
+    renderAdminOrders();
+
+    renderOrders();
+
+    showToast(
+        "Статус заказа изменён"
+    );
+
+}
+
+
+/* =========================================
+   DELETE ORDER
+========================================= */
+
+function deleteAdminOrder(index) {
+
+    const orders =
+        getAdminOrders();
+
+
+    if (
+        index < 0 ||
+        index >= orders.length
+    ) {
+        return;
+    }
+
+
+    const confirmed =
+        confirm(
+            "Удалить этот заказ?"
+        );
+
+
+    if (!confirmed) {
+        return;
+    }
+
+
+    orders.splice(
+        index,
+        1
+    );
+
+
+    localStorage.setItem(
+        "rustOrders",
+        JSON.stringify(orders)
+    );
+
+
+    renderAdminOrders();
+
+    renderOrders();
+
+    updateProfile();
+
+    showToast(
+        "Заказ удалён"
+    );
+
+}
+
+
+/* =========================================
+   CLEAR ORDERS
+========================================= */
+
+function clearAdminOrders() {
+
+    const confirmed =
+        confirm(
+            "Удалить ВСЮ историю заказов?"
+        );
+
+
+    if (!confirmed) {
+        return;
+    }
+
+
+    localStorage.removeItem(
+        "rustOrders"
+    );
+
+
+    renderAdminOrders();
+
+    renderOrders();
+
+    updateProfile();
+
+    showToast(
+        "История заказов очищена"
+    );
+
+}
+
+
+/* =========================================
+   СЕКРЕТНЫЙ ВХОД В АДМИНКУ
+========================================= */
+
+let adminKeys = "";
+
+
+document.addEventListener(
+    "keydown",
+    function(event) {
+
+        /*
+           Набери на клавиатуре:
+
+           AKASHISK8
+        */
+
+        if (
+            event.key &&
+            event.key.length === 1
+        ) {
+
+            adminKeys +=
+                event.key.toUpperCase();
+
+        }
+
+
+        if (
+            adminKeys.length > 20
+        ) {
+
+            adminKeys =
+                adminKeys.slice(-20);
+
+        }
+
+
+        if (
+            adminKeys.includes(
+                "AKASHISK8"
+            )
+        ) {
+
+            adminKeys = "";
+
+            openAdminPanel();
+
+        }
+
+    }
+);
