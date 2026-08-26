@@ -2883,3 +2883,611 @@ function showToast(
     );
 
 }
+/* =========================================
+   REVIEWS
+========================================= */
+
+let selectedRating = 0;
+
+
+/* =========================================
+   GET REVIEWS
+========================================= */
+
+function getReviews() {
+
+    const reviews =
+        JSON.parse(
+            localStorage.getItem("rustReviews") || "[]"
+        );
+
+    return Array.isArray(reviews)
+        ? reviews
+        : [];
+}
+
+
+/* =========================================
+   SAVE REVIEWS
+========================================= */
+
+function saveReviews(reviews) {
+
+    localStorage.setItem(
+        "rustReviews",
+        JSON.stringify(reviews)
+    );
+
+}
+
+
+/* =========================================
+   SHOW REVIEWS
+========================================= */
+
+function renderReviews() {
+
+    const container =
+        document.getElementById("reviewsList");
+
+    const empty =
+        document.getElementById("reviewsEmpty");
+
+    if (!container) {
+        return;
+    }
+
+    const reviews = getReviews();
+
+    if (!reviews.length) {
+
+        container.innerHTML = "";
+
+        if (empty) {
+            empty.style.display = "block";
+        }
+
+        return;
+    }
+
+    if (empty) {
+        empty.style.display = "none";
+    }
+
+    container.innerHTML = "";
+
+    reviews.forEach(review => {
+
+        const stars =
+            "★".repeat(
+                Number(review.rating) || 0
+            ) +
+            "☆".repeat(
+                5 - (Number(review.rating) || 0)
+            );
+
+        const date =
+            review.date
+                ? new Date(review.date)
+                    .toLocaleDateString("ru-RU")
+                : "";
+
+        const items =
+            Array.isArray(review.items)
+                ? review.items
+                    .map(item =>
+                        escapeHTML(item.name)
+                    )
+                    .join(", ")
+                : "";
+
+        container.innerHTML += `
+
+            <article class="review-card">
+
+                <div class="review-card-top">
+
+                    <div class="review-user">
+
+                        <div class="review-avatar">
+                            ${escapeHTML(
+                                (review.name || "A")
+                                    .charAt(0)
+                                    .toUpperCase()
+                            )}
+                        </div>
+
+                        <div>
+
+                            <strong>
+                                ${escapeHTML(
+                                    review.name || "Покупатель"
+                                )}
+                            </strong>
+
+                            <span>
+                                ${date}
+                            </span>
+
+                        </div>
+
+                    </div>
+
+
+                    <div class="review-stars">
+                        ${stars}
+                    </div>
+
+                </div>
+
+
+                <p class="review-card-text">
+                    ${escapeHTML(
+                        review.text
+                    )}
+                </p>
+
+
+                ${
+                    items
+                    ? `
+                        <div class="review-product">
+                            🛒 ${items}
+                        </div>
+                    `
+                    : ""
+                }
+
+            </article>
+
+        `;
+
+    });
+
+}
+
+
+/* =========================================
+   OPEN REVIEW
+========================================= */
+
+function openReview(orderIndex) {
+
+    const orders =
+        JSON.parse(
+            localStorage.getItem(
+                "rustOrders"
+            ) || "[]"
+        );
+
+    if (
+        orderIndex < 0 ||
+        orderIndex >= orders.length
+    ) {
+        showToast(
+            "Заказ не найден"
+        );
+
+        return;
+    }
+
+    const order =
+        orders[orderIndex];
+
+    /*
+       Проверяем, не оставлял ли пользователь
+       отзыв на этот заказ.
+    */
+
+    const reviews = getReviews();
+
+    const alreadyReviewed =
+        reviews.some(
+            review =>
+                review.orderId === order.id
+        );
+
+    if (alreadyReviewed) {
+
+        showToast(
+            "Вы уже оставили отзыв на этот заказ"
+        );
+
+        return;
+    }
+
+
+    selectedRating = 0;
+
+    const orderNumber =
+        document.getElementById(
+            "reviewOrderNumber"
+        );
+
+    const name =
+        document.getElementById(
+            "reviewName"
+        );
+
+    const text =
+        document.getElementById(
+            "reviewText"
+        );
+
+    const ratingText =
+        document.getElementById(
+            "reviewRatingText"
+        );
+
+
+    if (orderNumber) {
+
+        orderNumber.textContent =
+            order.id || "—";
+
+    }
+
+
+    if (name) {
+
+        name.value =
+            localStorage.getItem(
+                "rustReviewName"
+            ) || "";
+
+    }
+
+
+    if (text) {
+
+        text.value = "";
+
+    }
+
+
+    if (ratingText) {
+
+        ratingText.textContent =
+            "Выберите оценку";
+
+    }
+
+
+    updateRatingButtons();
+
+    /*
+       Запоминаем заказ,
+       чтобы submitReview() знал,
+       к какому заказу относится отзыв.
+    */
+
+    sessionStorage.setItem(
+        "reviewOrderIndex",
+        String(orderIndex)
+    );
+
+
+    openModal(
+        "reviewModal"
+    );
+
+}
+
+
+/* =========================================
+   SELECT RATING
+========================================= */
+
+function selectRating(rating) {
+
+    rating =
+        Number(rating);
+
+
+    if (
+        rating < 1 ||
+        rating > 5
+    ) {
+        return;
+    }
+
+
+    selectedRating =
+        rating;
+
+
+    updateRatingButtons();
+
+
+    const ratingText =
+        document.getElementById(
+            "reviewRatingText"
+        );
+
+
+    const texts = {
+
+        1: "Очень плохо",
+
+        2: "Плохо",
+
+        3: "Нормально",
+
+        4: "Хорошо",
+
+        5: "Отлично!"
+
+    };
+
+
+    if (ratingText) {
+
+        ratingText.textContent =
+            texts[rating];
+
+    }
+
+}
+
+
+/* =========================================
+   UPDATE RATING BUTTONS
+========================================= */
+
+function updateRatingButtons() {
+
+    document
+        .querySelectorAll(
+            "#reviewModal .review-rating button"
+        )
+        .forEach(button => {
+
+            const rating =
+                Number(
+                    button.dataset.rating
+                );
+
+            button.classList.toggle(
+                "active",
+                rating <= selectedRating
+            );
+
+        });
+
+}
+
+
+/* =========================================
+   SUBMIT REVIEW
+========================================= */
+
+function submitReview() {
+
+    const orderIndex =
+        Number(
+            sessionStorage.getItem(
+                "reviewOrderIndex"
+            )
+        );
+
+
+    const orders =
+        JSON.parse(
+            localStorage.getItem(
+                "rustOrders"
+            ) || "[]"
+        );
+
+
+    if (
+        !Number.isInteger(orderIndex) ||
+        !orders[orderIndex]
+    ) {
+
+        showToast(
+            "Заказ не найден"
+        );
+
+        return;
+    }
+
+
+    if (selectedRating < 1) {
+
+        showToast(
+            "Поставьте оценку"
+        );
+
+        return;
+    }
+
+
+    const nameElement =
+        document.getElementById(
+            "reviewName"
+        );
+
+
+    const textElement =
+        document.getElementById(
+            "reviewText"
+        );
+
+
+    const name =
+        nameElement
+            ? nameElement.value.trim()
+            : "";
+
+
+    const text =
+        textElement
+            ? textElement.value.trim()
+            : "";
+
+
+    if (!name) {
+
+        showToast(
+            "Введите ваше имя"
+        );
+
+        if (nameElement) {
+            nameElement.focus();
+        }
+
+        return;
+    }
+
+
+    if (!text) {
+
+        showToast(
+            "Напишите отзыв"
+        );
+
+        if (textElement) {
+            textElement.focus();
+        }
+
+        return;
+    }
+
+
+    const order =
+        orders[orderIndex];
+
+
+    const reviews =
+        getReviews();
+
+
+    /*
+       Дополнительная проверка,
+       чтобы нельзя было оставить
+       два отзыва на один заказ.
+    */
+
+    const exists =
+        reviews.some(
+            review =>
+                review.orderId === order.id
+        );
+
+
+    if (exists) {
+
+        closeModal(
+            "reviewModal"
+        );
+
+        showToast(
+            "Отзыв на этот заказ уже опубликован"
+        );
+
+        return;
+    }
+
+
+    const review = {
+
+        id:
+            "review-" +
+            Date.now(),
+
+        orderId:
+            order.id,
+
+        name:
+            name,
+
+        text:
+            text,
+
+        rating:
+            selectedRating,
+
+        items:
+            Array.isArray(order.items)
+                ? order.items.map(item => ({
+                    name: item.name
+                }))
+                : [],
+
+        date:
+            new Date().toISOString()
+
+    };
+
+
+    reviews.unshift(
+        review
+    );
+
+
+    saveReviews(
+        reviews
+    );
+
+
+    localStorage.setItem(
+        "rustReviewName",
+        name
+    );
+
+
+    /*
+       Помечаем заказ,
+       что отзыв уже оставлен.
+    */
+
+    order.reviewed = true;
+
+
+    localStorage.setItem(
+        "rustOrders",
+        JSON.stringify(orders)
+    );
+
+
+    selectedRating = 0;
+
+
+    closeModal(
+        "reviewModal"
+    );
+
+
+    renderReviews();
+
+    renderOrders();
+
+
+    showToast(
+        "Спасибо! Ваш отзыв опубликован ⭐"
+    );
+
+
+    setTimeout(() => {
+
+        scrollToSection(
+            "reviews"
+        );
+
+    }, 300);
+
+}
+
+
+/* =========================================
+   INIT REVIEWS
+========================================= */
+
+document.addEventListener(
+    "DOMContentLoaded",
+    function() {
+
+        renderReviews();
+
+    }
+);
