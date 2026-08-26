@@ -1,19 +1,29 @@
-/* =========================================
+/* =====================================================
    RUST MOBILE SHOP
-   script.js
-========================================= */
+   COMPLETE SCRIPT
+===================================================== */
 
 
-/* =========================================
-   TELEGRAM
-========================================= */
+/* =====================================================
+   SETTINGS
+===================================================== */
 
 const TELEGRAM_SELLER = "luxanixx";
 
+const ADMIN_LOGIN = "AkashiSK8";
 
-/* =========================================
-   ТОВАРЫ
-========================================= */
+/*
+   ВАЖНО:
+   Для настоящего магазина такой пароль на клиентском
+   JavaScript не является безопасной защитой.
+   Это подходит только для текущей статической версии.
+*/
+const ADMIN_PASSWORD = "AKASHI2026";
+
+
+/* =====================================================
+   PRODUCTS
+===================================================== */
 
 const products = {
 
@@ -84,6 +94,7 @@ const products = {
 
     ],
 
+
     battlepass: [
 
         {
@@ -94,6 +105,7 @@ const products = {
         }
 
     ],
+
 
     promotions: [
 
@@ -116,32 +128,47 @@ const products = {
 };
 
 
-/* =========================================
-   CART
-========================================= */
+/* =====================================================
+   PROMOCODES
+===================================================== */
 
-let cart = loadJSON(
-    "rustCart",
-    []
-);
+const promoCodes = {
+
+    RUST10: 10,
+
+    AKASHI: 15,
+
+    RUSTSHOP: 5
+
+};
 
 
-/* =========================================
+let activePromo = null;
+
+
+/* =====================================================
+   STATE
+===================================================== */
+
+let cart =
+    JSON.parse(
+        localStorage.getItem("rustCart") || "[]"
+    );
+
+let currentCategory = "coins";
+
+
+/* =====================================================
    START
-========================================= */
+===================================================== */
 
 document.addEventListener(
     "DOMContentLoaded",
     () => {
 
-        const first =
-            document.querySelector(
-                ".category"
-            );
-
         showCategory(
             "coins",
-            first
+            document.querySelector(".category")
         );
 
         updateCart();
@@ -150,175 +177,240 @@ document.addEventListener(
 
         updateProfile();
 
+        preparePromo();
+
+        prepareAdmin();
+
     }
 );
 
 
-/* =========================================
-   STORAGE
-========================================= */
-
-function loadJSON(
-    key,
-    fallback
-) {
-
-    try {
-
-        const data =
-            localStorage.getItem(key);
-
-        if (!data) {
-            return fallback;
-        }
-
-        const parsed =
-            JSON.parse(data);
-
-        return parsed ?? fallback;
-
-    } catch {
-
-        return fallback;
-
-    }
-
-}
-
-
-function saveJSON(
-    key,
-    value
-) {
-
-    localStorage.setItem(
-        key,
-        JSON.stringify(value)
-    );
-
-}
-
-
-/* =========================================
+/* =====================================================
    CATEGORY
-========================================= */
+===================================================== */
 
 function showCategory(
     category,
     button
 ) {
 
+    currentCategory = category;
+
+
     document
-        .querySelectorAll(
-            ".category"
-        )
+        .querySelectorAll(".category")
         .forEach(
-            item =>
-                item.classList.remove(
-                    "active"
-                )
+            item => {
+                item.classList.remove("active");
+            }
         );
 
+
     if (button) {
-        button.classList.add(
-            "active"
-        );
+        button.classList.add("active");
     }
+
+
+    filterProducts();
+
+}
+
+
+/* =====================================================
+   FILTER PRODUCTS
+===================================================== */
+
+function filterProducts() {
 
     const container =
         document.getElementById(
             "products"
         );
 
-    if (
-        !container ||
-        !products[category]
-    ) {
+    if (!container) {
         return;
     }
 
+
+    const searchInput =
+        document.getElementById(
+            "productSearch"
+        );
+
+
+    const sortInput =
+        document.getElementById(
+            "sortProducts"
+        );
+
+
+    const search =
+        searchInput
+            ? searchInput.value
+                .trim()
+                .toLowerCase()
+            : "";
+
+
+    const sort =
+        sortInput
+            ? sortInput.value
+            : "default";
+
+
+    let list =
+        products[currentCategory]
+            ? [...products[currentCategory]]
+            : [];
+
+
+    if (search) {
+
+        list =
+            list.filter(
+                product =>
+                    product.name
+                        .toLowerCase()
+                        .includes(search) ||
+
+                    product.description
+                        .toLowerCase()
+                        .includes(search)
+            );
+
+    }
+
+
+    if (sort === "cheap") {
+
+        list.sort(
+            (a, b) =>
+                a.price - b.price
+        );
+
+    }
+
+
+    if (sort === "expensive") {
+
+        list.sort(
+            (a, b) =>
+                b.price - a.price
+        );
+
+    }
+
+
+    if (!list.length) {
+
+        container.innerHTML = `
+            <div class="empty">
+                🔎
+                <br><br>
+                Ничего не найдено
+            </div>
+        `;
+
+        return;
+    }
+
+
     container.innerHTML = "";
 
-    products[category]
-        .forEach(
-            product => {
 
-                container.innerHTML +=
-                    createProductHTML(
-                        product
-                    );
+    list.forEach(
+        (product, index) => {
 
-            }
-        );
+            const element =
+                document.createElement(
+                    "article"
+                );
+
+            element.className =
+                "product";
+
+            element.style.animationDelay =
+                `${index * 0.06}s`;
+
+
+            element.innerHTML =
+                createProductHTML(
+                    product
+                );
+
+
+            container.appendChild(
+                element
+            );
+
+        }
+    );
 
 }
 
 
-/* =========================================
-   PRODUCT
-========================================= */
+/* =====================================================
+   PRODUCT HTML
+===================================================== */
 
-function createProductHTML(
-    product
-) {
+function createProductHTML(product) {
 
     return `
 
-        <article class="product">
+        <div class="product-image">
 
-            <div class="product-image">
+            <div class="product-coins">
 
-                <div class="product-coins">
+                <div class="mini-coin">
+                    ✦
+                </div>
 
-                    <div class="mini-coin">
-                        ✦
-                    </div>
+                <div class="mini-coin">
+                    ✦
+                </div>
 
-                    <div class="mini-coin">
-                        ✦
-                    </div>
-
-                    <div class="mini-coin">
-                        ✦
-                    </div>
-
+                <div class="mini-coin">
+                    ✦
                 </div>
 
             </div>
 
-            <h3>
-                ${escapeHTML(product.name)}
-            </h3>
+        </div>
 
-            <div class="product-description">
-                ${escapeHTML(product.description)}
+
+        <h3>
+            ${escapeHTML(product.name)}
+        </h3>
+
+
+        <div class="product-description">
+            ${escapeHTML(product.description)}
+        </div>
+
+
+        <div class="product-bottom">
+
+            <div class="price">
+                ${formatPrice(product.price)} ₽
             </div>
 
-            <div class="product-bottom">
 
-                <div class="price">
-                    ${formatPrice(product.price)} ₽
-                </div>
+            <button
+                type="button"
+                onclick="addToCart('${escapeJS(product.id)}')"
+            >
+                🛒 Купить
+            </button>
 
-                <button
-                    type="button"
-                    onclick="addToCart('${product.id}')"
-                >
-                    🛒 Купить
-                </button>
-
-            </div>
-
-        </article>
+        </div>
 
     `;
-
 }
 
 
-/* =========================================
+/* =====================================================
    FIND PRODUCT
-========================================= */
+===================================================== */
 
 function findProduct(id) {
 
@@ -327,11 +419,11 @@ function findProduct(id) {
     ) {
 
         const product =
-            products[category]
-                .find(
-                    item =>
-                        item.id === id
-                );
+            products[category].find(
+                item =>
+                    item.id === id
+            );
+
 
         if (product) {
             return product;
@@ -340,18 +432,18 @@ function findProduct(id) {
     }
 
     return null;
-
 }
 
 
-/* =========================================
-   CART
-========================================= */
+/* =====================================================
+   ADD CART
+===================================================== */
 
 function addToCart(id) {
 
     const product =
         findProduct(id);
+
 
     if (!product) {
 
@@ -360,29 +452,39 @@ function addToCart(id) {
         );
 
         return;
-
     }
 
+
     cart.push({
+
         id: product.id,
+
         name: product.name,
+
         price: product.price,
-        description: product.description
+
+        description:
+            product.description
+
     });
 
-    saveJSON(
-        "rustCart",
-        cart
-    );
+
+    saveCart();
 
     updateCart();
 
+    animateCart();
+
     showToast(
-        "Товар добавлен в корзину"
+        `${product.name} добавлен в корзину`
     );
 
 }
 
+
+/* =====================================================
+   REMOVE CART
+===================================================== */
 
 function removeFromCart(index) {
 
@@ -393,15 +495,14 @@ function removeFromCart(index) {
         return;
     }
 
+
     cart.splice(
         index,
         1
     );
 
-    saveJSON(
-        "rustCart",
-        cart
-    );
+
+    saveCart();
 
     updateCart();
 
@@ -410,12 +511,31 @@ function removeFromCart(index) {
 }
 
 
+/* =====================================================
+   SAVE CART
+===================================================== */
+
+function saveCart() {
+
+    localStorage.setItem(
+        "rustCart",
+        JSON.stringify(cart)
+    );
+
+}
+
+
+/* =====================================================
+   UPDATE CART
+===================================================== */
+
 function updateCart() {
 
     const element =
         document.getElementById(
             "cartCount"
         );
+
 
     if (element) {
 
@@ -426,6 +546,42 @@ function updateCart() {
 
 }
 
+
+/* =====================================================
+   CART ANIMATION
+===================================================== */
+
+function animateCart() {
+
+    const cartButton =
+        document.querySelector(
+            ".cart-button"
+        );
+
+
+    if (!cartButton) {
+        return;
+    }
+
+
+    cartButton.classList.remove(
+        "cart-bump"
+    );
+
+
+    void cartButton.offsetWidth;
+
+
+    cartButton.classList.add(
+        "cart-bump"
+    );
+
+}
+
+
+/* =====================================================
+   OPEN CART
+===================================================== */
 
 function openCart() {
 
@@ -438,6 +594,79 @@ function openCart() {
 }
 
 
+/* =====================================================
+   CART TOTAL
+===================================================== */
+
+function calculateSubtotal() {
+
+    return cart.reduce(
+        (
+            total,
+            item
+        ) => {
+
+            return total +
+                (
+                    Number(item.price) || 0
+                );
+
+        },
+        0
+    );
+
+}
+
+
+function getDiscount(
+    subtotal
+) {
+
+    if (
+        !activePromo ||
+        !promoCodes[activePromo]
+    ) {
+        return 0;
+    }
+
+
+    const percent =
+        promoCodes[activePromo];
+
+
+    return Math.round(
+        subtotal *
+        percent /
+        100
+    );
+
+}
+
+
+function getFinalTotal() {
+
+    const subtotal =
+        calculateSubtotal();
+
+
+    const discount =
+        getDiscount(
+            subtotal
+        );
+
+
+    return Math.max(
+        0,
+        subtotal - discount
+    );
+
+}
+
+
+/* =====================================================
+   RENDER CART
+===================================================== */
+
 function renderCart() {
 
     const container =
@@ -445,22 +674,15 @@ function renderCart() {
             "cartItems"
         );
 
-    const totalElement =
-        document.getElementById(
-            "cartTotal"
-        );
 
-    if (
-        !container ||
-        !totalElement
-    ) {
+    if (!container) {
         return;
     }
+
 
     if (!cart.length) {
 
         container.innerHTML = `
-
             <div class="empty">
 
                 🛒
@@ -470,70 +692,263 @@ function renderCart() {
                 Корзина пустая
 
             </div>
-
         `;
 
-        totalElement.textContent =
-            "0 ₽";
+    } else {
 
-        return;
+        container.innerHTML = "";
 
-    }
 
-    container.innerHTML = "";
+        cart.forEach(
+            (
+                item,
+                index
+            ) => {
 
-    let total = 0;
+                container.innerHTML += `
 
-    cart.forEach(
-        (item, index) => {
+                    <div class="cart-item">
 
-            total +=
-                Number(item.price) || 0;
+                        <div class="cart-item-info">
 
-            container.innerHTML += `
+                            <strong>
+                                ${escapeHTML(
+                                    item.name
+                                )}
+                            </strong>
 
-                <div class="cart-item">
+                            <span>
+                                ${formatPrice(
+                                    item.price
+                                )} ₽
+                            </span>
 
-                    <div class="cart-item-info">
+                        </div>
 
-                        <strong>
-                            ${escapeHTML(
-                                item.name
-                            )}
-                        </strong>
 
-                        <span>
-                            ${formatPrice(
-                                item.price
-                            )} ₽
-                        </span>
+                        <button
+                            class="cart-remove"
+                            onclick="removeFromCart(${index})"
+                        >
+                            🗑
+                        </button>
 
                     </div>
 
-                    <button
-                        type="button"
-                        class="cart-remove"
-                        onclick="removeFromCart(${index})"
-                    >
-                        🗑
-                    </button>
+                `;
 
-                </div>
+            }
+        );
 
-            `;
+    }
 
-        }
-    );
 
-    totalElement.textContent =
-        formatPrice(total) + " ₽";
+    const subtotal =
+        calculateSubtotal();
+
+
+    const discount =
+        getDiscount(
+            subtotal
+        );
+
+
+    const total =
+        Math.max(
+            0,
+            subtotal - discount
+        );
+
+
+    const subtotalElement =
+        document.getElementById(
+            "cartSubtotal"
+        );
+
+
+    const discountElement =
+        document.getElementById(
+            "cartDiscount"
+        );
+
+
+    const totalElement =
+        document.getElementById(
+            "cartTotal"
+        );
+
+
+    const discountRow =
+        document.getElementById(
+            "discountRow"
+        );
+
+
+    if (subtotalElement) {
+
+        subtotalElement.textContent =
+            formatPrice(
+                subtotal
+            ) + " ₽";
+
+    }
+
+
+    if (discountElement) {
+
+        discountElement.textContent =
+            "-" +
+            formatPrice(
+                discount
+            ) +
+            " ₽";
+
+    }
+
+
+    if (totalElement) {
+
+        totalElement.textContent =
+            formatPrice(
+                total
+            ) + " ₽";
+
+    }
+
+
+    if (discountRow) {
+
+        discountRow.classList.toggle(
+            "hidden",
+            discount <= 0
+        );
+
+    }
 
 }
 
 
-/* =========================================
+/* =====================================================
+   PROMO
+===================================================== */
+
+function preparePromo() {
+
+    const saved =
+        localStorage.getItem(
+            "rustPromo"
+        );
+
+
+    if (
+        saved &&
+        promoCodes[saved]
+    ) {
+
+        activePromo =
+            saved;
+
+    }
+
+}
+
+
+function applyPromo() {
+
+    const input =
+        document.getElementById(
+            "promoInput"
+        );
+
+
+    const message =
+        document.getElementById(
+            "promoMessage"
+        );
+
+
+    if (!input) {
+        return;
+    }
+
+
+    const code =
+        input.value
+            .trim()
+            .toUpperCase();
+
+
+    if (!code) {
+
+        if (message) {
+
+            message.textContent =
+                "Введите промокод";
+
+        }
+
+        return;
+    }
+
+
+    if (
+        promoCodes[code]
+    ) {
+
+        activePromo =
+            code;
+
+
+        localStorage.setItem(
+            "rustPromo",
+            code
+        );
+
+
+        if (message) {
+
+            message.textContent =
+                `✓ Промокод применён: -${promoCodes[code]}%`;
+
+        }
+
+
+        showToast(
+            `Скидка ${promoCodes[code]}% применена`
+        );
+
+
+        renderCart();
+
+        return;
+    }
+
+
+    activePromo =
+        null;
+
+
+    localStorage.removeItem(
+        "rustPromo"
+    );
+
+
+    if (message) {
+
+        message.textContent =
+            "✕ Такой промокод не найден";
+
+    }
+
+
+    renderCart();
+
+}
+
+
+/* =====================================================
    CHECKOUT
-========================================= */
+===================================================== */
 
 function checkout() {
 
@@ -544,18 +959,20 @@ function checkout() {
         );
 
         return;
-
     }
+
+
+    const contact =
+        document.getElementById(
+            "checkoutContact"
+        );
+
 
     const savedContact =
         localStorage.getItem(
             "rustContact"
         );
 
-    const contact =
-        document.getElementById(
-            "checkoutContact"
-        );
 
     if (
         contact &&
@@ -567,13 +984,16 @@ function checkout() {
 
     }
 
+
     const orderNumber =
         generateOrderNumber();
+
 
     const numberElement =
         document.getElementById(
             "orderNumber"
         );
+
 
     if (numberElement) {
 
@@ -582,11 +1002,14 @@ function checkout() {
 
     }
 
+
     renderCheckoutItems();
+
 
     closeModal(
         "cartModal"
     );
+
 
     openModal(
         "checkoutModal"
@@ -595,17 +1018,19 @@ function checkout() {
 }
 
 
-/* =========================================
+/* =====================================================
    ORDER NUMBER
-========================================= */
+===================================================== */
 
 function generateOrderNumber() {
 
     const now =
         new Date();
 
+
     const year =
         now.getFullYear();
+
 
     const month =
         String(
@@ -615,6 +1040,7 @@ function generateOrderNumber() {
             "0"
         );
 
+
     const day =
         String(
             now.getDate()
@@ -623,6 +1049,7 @@ function generateOrderNumber() {
             "0"
         );
 
+
     const random =
         Math.floor(
             100000 +
@@ -630,16 +1057,15 @@ function generateOrderNumber() {
             900000
         );
 
-    return (
-        `RM-${year}${month}${day}-${random}`
-    );
+
+    return `RM-${year}${month}${day}-${random}`;
 
 }
 
 
-/* =========================================
+/* =====================================================
    CHECKOUT ITEMS
-========================================= */
+===================================================== */
 
 function renderCheckoutItems() {
 
@@ -648,43 +1074,45 @@ function renderCheckoutItems() {
             "checkoutItems"
         );
 
+
     const totalElement =
         document.getElementById(
             "checkoutTotal"
         );
 
-    if (
-        !container ||
-        !totalElement
-    ) {
+
+    const discountElement =
+        document.getElementById(
+            "checkoutDiscount"
+        );
+
+
+    if (!container) {
         return;
     }
 
+
     container.innerHTML = "";
 
-    let total = 0;
 
     cart.forEach(
         item => {
-
-            total +=
-                Number(item.price) || 0;
 
             container.innerHTML += `
 
                 <div class="checkout-item">
 
-                    <span class="checkout-item-name">
+                    <span>
                         ${escapeHTML(
                             item.name
                         )}
                     </span>
 
-                    <span class="checkout-item-price">
+                    <strong>
                         ${formatPrice(
                             item.price
                         )} ₽
-                    </span>
+                    </strong>
 
                 </div>
 
@@ -693,15 +1121,48 @@ function renderCheckoutItems() {
         }
     );
 
-    totalElement.textContent =
-        formatPrice(total) + " ₽";
+
+    const subtotal =
+        calculateSubtotal();
+
+
+    const discount =
+        getDiscount(
+            subtotal
+        );
+
+
+    const total =
+        subtotal - discount;
+
+
+    if (discountElement) {
+
+        discountElement.textContent =
+            "-" +
+            formatPrice(
+                discount
+            ) +
+            " ₽";
+
+    }
+
+
+    if (totalElement) {
+
+        totalElement.textContent =
+            formatPrice(
+                total
+            ) + " ₽";
+
+    }
 
 }
 
 
-/* =========================================
+/* =====================================================
    CREATE ORDER
-========================================= */
+===================================================== */
 
 function createOrder() {
 
@@ -710,115 +1171,179 @@ function createOrder() {
             "checkoutContact"
         );
 
+
+    const commentElement =
+        document.getElementById(
+            "checkoutComment"
+        );
+
+
     const paymentElement =
         document.getElementById(
             "paymentMethod"
         );
+
 
     const agreementElement =
         document.getElementById(
             "agreement"
         );
 
-    const numberElement =
+
+    const orderElement =
         document.getElementById(
             "orderNumber"
         );
+
 
     const contact =
         contactElement
             ? contactElement.value.trim()
             : "";
 
+
+    const comment =
+        commentElement
+            ? commentElement.value.trim()
+            : "";
+
+
     const payment =
         paymentElement
             ? paymentElement.value
             : "card";
 
-    const agreement =
-        agreementElement
-            ? agreementElement.checked
-            : false;
-
-    const orderNumber =
-        numberElement
-            ? numberElement.textContent
-            : generateOrderNumber();
-
 
     if (!contact) {
 
         showToast(
-            "Введите Почту / WeChat ID"
+            "Введите почту или WeChat ID"
         );
 
-        contactElement?.focus();
+        if (contactElement) {
+            contactElement.focus();
+        }
 
         return;
-
     }
 
 
-    if (!agreement) {
+    if (
+        agreementElement &&
+        !agreementElement.checked
+    ) {
 
         showToast(
-            "Подтвердите правильность данных"
+            "Подтвердите данные заказа"
         );
 
         return;
-
     }
 
 
-    let total = 0;
+    const orderNumber =
+        orderElement
+            ? orderElement.textContent
+            : generateOrderNumber();
 
-    cart.forEach(
-        item => {
 
-            total +=
-                Number(item.price) || 0;
+    const subtotal =
+        calculateSubtotal();
 
-        }
-    );
+
+    const discount =
+        getDiscount(
+            subtotal
+        );
+
+
+    const total =
+        subtotal - discount;
 
 
     const paymentNames = {
 
-        card:
-            "Банковская карта",
+        card: "Банковская карта",
 
-        sbp:
-            "СБП",
+        sbp: "СБП",
 
-        crypto:
-            "Криптовалюта"
+        crypto: "Криптовалюта"
 
     };
 
 
     const paymentName =
         paymentNames[payment] ||
-        "Не указан";
+        payment;
 
 
     const now =
         new Date();
 
 
-    const date =
-        now.toLocaleDateString(
-            "ru-RU"
+    const order = {
+
+        id:
+            orderNumber,
+
+        items:
+            [...cart],
+
+        subtotal:
+            subtotal,
+
+        discount:
+            discount,
+
+        total:
+            total,
+
+        promo:
+            activePromo || "",
+
+        contact:
+            contact,
+
+        comment:
+            comment,
+
+        paymentMethod:
+            paymentName,
+
+        status:
+            "Новый",
+
+        date:
+            now.toISOString()
+
+    };
+
+
+    let orders =
+        JSON.parse(
+            localStorage.getItem(
+                "rustOrders"
+            ) || "[]"
         );
 
 
-    const time =
-        now.toLocaleTimeString(
-            "ru-RU",
-            {
-                hour: "2-digit",
-                minute: "2-digit"
-            }
-        );
+    orders.unshift(
+        order
+    );
+
+
+    localStorage.setItem(
+        "rustOrders",
+        JSON.stringify(
+            orders
+        )
+    );
+
+
+    localStorage.setItem(
+        "rustContact",
+        contact
+    );
 
 
     const itemsText =
@@ -830,83 +1355,47 @@ function createOrder() {
             .join("\n");
 
 
-    const order = {
-
-        id:
-            orderNumber,
-
-        contact:
-            contact,
-
-        items:
-            [...cart],
-
-        total:
-            total,
-
-        paymentMethod:
-            paymentName,
-
-        status:
-            "Ожидает оплаты",
-
-        date:
-            now.toISOString()
-
-    };
-
-
-    const orders =
-        loadJSON(
-            "rustOrders",
-            []
-        );
-
-
-    orders.unshift(
-        order
-    );
-
-
-    saveJSON(
-        "rustOrders",
-        orders
-    );
-
-
-    localStorage.setItem(
-        "rustContact",
-        contact
-    );
-
-
     const message =
-
 `🛒 НОВЫЙ ЗАКАЗ
 
 🔢 Номер:
 ${orderNumber}
 
-📦 Товар:
+📦 Товары:
 ${itemsText}
 
 💰 Сумма:
 ${formatPrice(total)} ₽
 
-📧 Почта / WeChat ID:
+🏷️ Промокод:
+${activePromo || "Нет"}
+
+📉 Скидка:
+${formatPrice(discount)} ₽
+
+📧 Почта / WeChat:
 ${contact}
 
 💳 Оплата:
 ${paymentName}
 
+📝 Комментарий:
+${comment || "Нет"}
+
 📅 Дата:
-${date}
+${now.toLocaleDateString("ru-RU")}
 
 🕐 Время:
-${time}
+${now.toLocaleTimeString(
+    "ru-RU",
+    {
+        hour: "2-digit",
+        minute: "2-digit"
+    }
+)}
 
 ⏳ Статус:
-Ожидает оплаты`;
+Новый`;
 
 
     sessionStorage.setItem(
@@ -920,10 +1409,12 @@ ${time}
             "successOrderNumber"
         );
 
+
     const successContact =
         document.getElementById(
             "successContact"
         );
+
 
     const successTotal =
         document.getElementById(
@@ -938,6 +1429,7 @@ ${time}
 
     }
 
+
     if (successContact) {
 
         successContact.textContent =
@@ -945,10 +1437,27 @@ ${time}
 
     }
 
+
     if (successTotal) {
 
         successTotal.textContent =
-            formatPrice(total) + " ₽";
+            formatPrice(
+                total
+            ) + " ₽";
+
+    }
+
+
+    const telegram =
+        document.getElementById(
+            "successTelegram"
+        );
+
+
+    if (telegram) {
+
+        telegram.href =
+            `https://t.me/${TELEGRAM_SELLER}?text=${encodeURIComponent(message)}`;
 
     }
 
@@ -956,11 +1465,7 @@ ${time}
     cart = [];
 
 
-    saveJSON(
-        "rustCart",
-        cart
-    );
-
+    saveCart();
 
     updateCart();
 
@@ -974,79 +1479,32 @@ ${time}
     );
 
 
-    openModal(
-        "successModal"
+    activePromo =
+        null;
+
+
+    localStorage.removeItem(
+        "rustPromo"
     );
 
-
-    /*
-       Через небольшую задержку
-       открываем Telegram.
-    */
 
     setTimeout(
         () => {
 
-            openTelegramSeller(
-                message
+            openModal(
+                "successModal"
             );
 
         },
-        700
+        250
     );
 
 }
 
 
-/* =========================================
-   TELEGRAM
-========================================= */
-
-function openTelegramSeller(
-    message
-) {
-
-    const encoded =
-        encodeURIComponent(
-            message
-        );
-
-    const url =
-        `https://t.me/${TELEGRAM_SELLER}?text=${encoded}`;
-
-    window.location.href =
-        url;
-
-}
-
-
-function openLastTelegramOrder() {
-
-    const message =
-        sessionStorage.getItem(
-            "lastTelegramMessage"
-        );
-
-    if (!message) {
-
-        showToast(
-            "Нет последнего заказа"
-        );
-
-        return;
-
-    }
-
-    openTelegramSeller(
-        message
-    );
-
-}
-
-
-/* =========================================
+/* =====================================================
    PROFILE
-========================================= */
+===================================================== */
 
 function openProfile() {
 
@@ -1061,18 +1519,8 @@ function openProfile() {
 
 function updateProfile() {
 
-    const contact =
-        localStorage.getItem(
-            "rustContact"
-        ) ||
-        "Не указан";
-
-
     const orders =
-        loadJSON(
-            "rustOrders",
-            []
-        );
+        getOrders();
 
 
     let spent = 0;
@@ -1090,28 +1538,17 @@ function updateProfile() {
     );
 
 
-    const contactElement =
-        document.getElementById(
-            "profileContact"
-        );
-
     const ordersElement =
         document.getElementById(
             "profileOrders"
         );
+
 
     const spentElement =
         document.getElementById(
             "profileSpent"
         );
 
-
-    if (contactElement) {
-
-        contactElement.textContent =
-            contact;
-
-    }
 
     if (ordersElement) {
 
@@ -1120,19 +1557,41 @@ function updateProfile() {
 
     }
 
+
     if (spentElement) {
 
         spentElement.textContent =
-            formatPrice(spent) + " ₽";
+            formatPrice(
+                spent
+            ) + " ₽";
 
     }
 
 }
 
 
-/* =========================================
+/* =====================================================
    ORDERS
-========================================= */
+===================================================== */
+
+function getOrders() {
+
+    const orders =
+        JSON.parse(
+            localStorage.getItem(
+                "rustOrders"
+            ) || "[]"
+        );
+
+
+    return Array.isArray(
+        orders
+    )
+        ? orders
+        : [];
+
+}
+
 
 function openOrders() {
 
@@ -1156,16 +1615,14 @@ function renderOrders() {
             "ordersList"
         );
 
+
     if (!container) {
         return;
     }
 
 
     const orders =
-        loadJSON(
-            "rustOrders",
-            []
-        );
+        getOrders();
 
 
     if (!orders.length) {
@@ -1185,7 +1642,6 @@ function renderOrders() {
         `;
 
         return;
-
     }
 
 
@@ -1220,63 +1676,39 @@ function renderOrders() {
 
             container.innerHTML += `
 
-                <div
-                    class="order-history-item"
-                >
+                <div class="order-card">
 
-                    <div
-                        class="order-history-top"
-                    >
+                    <div class="order-top">
 
-                        <span
-                            class="order-history-number"
-                        >
+                        <span class="order-number">
                             ${escapeHTML(
                                 order.id
                             )}
                         </span>
 
-                        <span
-                            class="order-history-status"
-                        >
+                        <span class="status">
                             ${escapeHTML(
-                                order.status
+                                order.status ||
+                                "Новый"
                             )}
                         </span>
 
                     </div>
 
-                    <div
-                        class="order-history-info"
-                    >
+
+                    <div class="order-info">
 
                         📦 ${items}
 
                         <br>
 
-                        📧
-                        ${escapeHTML(
-                            order.contact
-                        )}
-
-                        <br>
-
-                        💰
-                        ${formatPrice(
+                        💰 ${formatPrice(
                             order.total
                         )} ₽
 
                         <br>
 
-                        💳
-                        ${escapeHTML(
-                            order.paymentMethod
-                        )}
-
-                        <br>
-
-                        🕐
-                        ${date}
+                        🕐 ${date}
 
                     </div>
 
@@ -1290,31 +1722,9 @@ function renderOrders() {
 }
 
 
-/* =========================================
-   FAQ
-========================================= */
-
-function openFAQ() {
-
-    const faq =
-        document.getElementById(
-            "faq"
-        );
-
-    if (faq) {
-
-        faq.scrollIntoView({
-            behavior: "smooth"
-        });
-
-    }
-
-}
-
-
-/* =========================================
+/* =====================================================
    SUPPORT
-========================================= */
+===================================================== */
 
 function openSupport() {
 
@@ -1325,22 +1735,752 @@ function openSupport() {
 }
 
 
-/* =========================================
+/* =====================================================
+   ADMIN LOGIN
+===================================================== */
+
+function prepareAdmin() {
+
+    const password =
+        document.getElementById(
+            "adminPassword"
+        );
+
+
+    if (password) {
+
+        password.addEventListener(
+            "keydown",
+            event => {
+
+                if (
+                    event.key === "Enter"
+                ) {
+
+                    loginAdmin();
+
+                }
+
+            }
+        );
+
+    }
+
+}
+
+
+function openAdminLogin() {
+
+    closeModal(
+        "profileModal"
+    );
+
+
+    const login =
+        document.getElementById(
+            "adminLogin"
+        );
+
+
+    const password =
+        document.getElementById(
+            "adminPassword"
+        );
+
+
+    const error =
+        document.getElementById(
+            "adminLoginError"
+        );
+
+
+    if (login) {
+        login.value = "";
+    }
+
+
+    if (password) {
+        password.value = "";
+    }
+
+
+    if (error) {
+        error.textContent = "";
+    }
+
+
+    openModal(
+        "adminLoginModal"
+    );
+
+}
+
+
+function loginAdmin() {
+
+    const loginElement =
+        document.getElementById(
+            "adminLogin"
+        );
+
+
+    const passwordElement =
+        document.getElementById(
+            "adminPassword"
+        );
+
+
+    const error =
+        document.getElementById(
+            "adminLoginError"
+        );
+
+
+    const login =
+        loginElement
+            ? loginElement.value.trim()
+            : "";
+
+
+    const password =
+        passwordElement
+            ? passwordElement.value
+            : "";
+
+
+    if (
+        login !== ADMIN_LOGIN ||
+        password !== ADMIN_PASSWORD
+    ) {
+
+        if (error) {
+
+            error.textContent =
+                "✕ Неверный логин или пароль";
+
+        }
+
+        return;
+    }
+
+
+    if (error) {
+        error.textContent = "";
+    }
+
+
+    closeModal(
+        "adminLoginModal"
+    );
+
+
+    openAdminPanel();
+
+}
+
+
+/* =====================================================
+   ADMIN PANEL
+===================================================== */
+
+function openAdminPanel() {
+
+    renderAdminOrders();
+
+    openModal(
+        "adminModal"
+    );
+
+}
+
+
+function refreshAdminOrders() {
+
+    renderAdminOrders();
+
+    showToast(
+        "Заказы обновлены"
+    );
+
+}
+
+
+function renderAdminOrders() {
+
+    const orders =
+        getOrders();
+
+
+    const total =
+        document.getElementById(
+            "adminTotalOrders"
+        );
+
+
+    const newOrders =
+        document.getElementById(
+            "adminNewOrders"
+        );
+
+
+    const sales =
+        document.getElementById(
+            "adminSales"
+        );
+
+
+    const completed =
+        document.getElementById(
+            "adminCompletedOrders"
+        );
+
+
+    const list =
+        document.getElementById(
+            "adminOrdersList"
+        );
+
+
+    const searchElement =
+        document.getElementById(
+            "adminSearch"
+        );
+
+
+    const filterElement =
+        document.getElementById(
+            "adminStatusFilter"
+        );
+
+
+    if (!list) {
+        return;
+    }
+
+
+    let filtered =
+        [...orders];
+
+
+    const search =
+        searchElement
+            ? searchElement.value
+                .trim()
+                .toLowerCase()
+            : "";
+
+
+    const filter =
+        filterElement
+            ? filterElement.value
+            : "all";
+
+
+    if (search) {
+
+        filtered =
+            filtered.filter(
+                order => {
+
+                    const text =
+                        JSON.stringify(
+                            order
+                        ).toLowerCase();
+
+                    return text.includes(
+                        search
+                    );
+
+                }
+            );
+
+    }
+
+
+    if (
+        filter !== "all"
+    ) {
+
+        filtered =
+            filtered.filter(
+                order =>
+                    order.status ===
+                    filter
+            );
+
+    }
+
+
+    let totalSales = 0;
+
+
+    orders.forEach(
+        order => {
+
+            if (
+                order.status !==
+                "Отменён"
+            ) {
+
+                totalSales +=
+                    Number(
+                        order.total
+                    ) || 0;
+
+            }
+
+        }
+    );
+
+
+    const newCount =
+        orders.filter(
+            order =>
+                order.status ===
+                "Новый"
+        ).length;
+
+
+    const completedCount =
+        orders.filter(
+            order =>
+                order.status ===
+                "Выполнен"
+        ).length;
+
+
+    if (total) {
+        total.textContent =
+            orders.length;
+    }
+
+
+    if (newOrders) {
+        newOrders.textContent =
+            newCount;
+    }
+
+
+    if (sales) {
+
+        sales.textContent =
+            formatPrice(
+                totalSales
+            ) + " ₽";
+
+    }
+
+
+    if (completed) {
+
+        completed.textContent =
+            completedCount;
+
+    }
+
+
+    if (!filtered.length) {
+
+        list.innerHTML = `
+
+            <div class="empty">
+
+                📦
+
+                <br><br>
+
+                Заказов не найдено
+
+            </div>
+
+        `;
+
+        return;
+    }
+
+
+    list.innerHTML = "";
+
+
+    filtered.forEach(
+        order => {
+
+            const originalIndex =
+                orders.indexOf(
+                    order
+                );
+
+
+            const date =
+                new Date(
+                    order.date
+                ).toLocaleString(
+                    "ru-RU"
+                );
+
+
+            const items =
+                Array.isArray(
+                    order.items
+                )
+                    ? order.items
+                        .map(
+                            item =>
+                                escapeHTML(
+                                    item.name
+                                )
+                        )
+                        .join(", ")
+                    : "—";
+
+
+            list.innerHTML += `
+
+                <div class="admin-order">
+
+                    <div class="admin-order-top">
+
+                        <span
+                            class="admin-order-number"
+                        >
+                            ${escapeHTML(
+                                order.id ||
+                                "Без номера"
+                            )}
+                        </span>
+
+
+                        <span
+                            class="admin-order-status"
+                        >
+                            ${escapeHTML(
+                                order.status ||
+                                "Новый"
+                            )}
+                        </span>
+
+                    </div>
+
+
+                    <div class="admin-order-info">
+
+                        <div>
+                            📦
+                            <strong>
+                                Товары:
+                            </strong>
+
+                            ${items}
+                        </div>
+
+
+                        <div>
+                            💰
+                            <strong>
+                                Сумма:
+                            </strong>
+
+                            ${formatPrice(
+                                order.total
+                            )} ₽
+                        </div>
+
+
+                        <div>
+                            📧
+                            <strong>
+                                Контакт:
+                            </strong>
+
+                            ${escapeHTML(
+                                order.contact ||
+                                "Не указан"
+                            )}
+                        </div>
+
+
+                        <div>
+                            🏷️
+                            <strong>
+                                Промокод:
+                            </strong>
+
+                            ${escapeHTML(
+                                order.promo ||
+                                "Нет"
+                            )}
+                        </div>
+
+
+                        <div>
+                            🕐
+                            <strong>
+                                Дата:
+                            </strong>
+
+                            ${date}
+                        </div>
+
+                    </div>
+
+
+                    <div
+                        class="admin-order-actions"
+                    >
+
+                        <select
+                            onchange="
+                                changeOrderStatus(
+                                    ${originalIndex},
+                                    this.value
+                                )
+                            "
+                        >
+
+                            ${statusOption(
+                                "Новый",
+                                order.status
+                            )}
+
+                            ${statusOption(
+                                "Ожидает оплаты",
+                                order.status
+                            )}
+
+                            ${statusOption(
+                                "Оплачен",
+                                order.status
+                            )}
+
+                            ${statusOption(
+                                "Выполнен",
+                                order.status
+                            )}
+
+                            ${statusOption(
+                                "Отменён",
+                                order.status
+                            )}
+
+                        </select>
+
+
+                        <button
+                            onclick="
+                                copyText(
+                                    '${escapeJS(
+                                        order.id
+                                    )}'
+                                )
+                            "
+                        >
+                            📋 Номер
+                        </button>
+
+
+                        <button
+                            onclick="
+                                deleteAdminOrder(
+                                    ${originalIndex}
+                                )
+                            "
+                        >
+                            🗑 Удалить
+                        </button>
+
+                    </div>
+
+                </div>
+
+            `;
+
+        }
+    );
+
+}
+
+
+function statusOption(
+    value,
+    current
+) {
+
+    return `
+
+        <option
+            value="${escapeHTML(value)}"
+            ${value === current
+                ? "selected"
+                : ""
+            }
+        >
+            ${escapeHTML(value)}
+        </option>
+
+    `;
+
+}
+
+
+/* =====================================================
+   CHANGE STATUS
+===================================================== */
+
+function changeOrderStatus(
+    index,
+    status
+) {
+
+    const orders =
+        getOrders();
+
+
+    if (
+        index < 0 ||
+        index >= orders.length
+    ) {
+        return;
+    }
+
+
+    orders[index].status =
+        status;
+
+
+    localStorage.setItem(
+        "rustOrders",
+        JSON.stringify(
+            orders
+        )
+    );
+
+
+    renderAdminOrders();
+
+    renderOrders();
+
+    updateProfile();
+
+
+    showToast(
+        "Статус заказа изменён"
+    );
+
+}
+
+
+/* =====================================================
+   DELETE ORDER
+===================================================== */
+
+function deleteAdminOrder(
+    index
+) {
+
+    const orders =
+        getOrders();
+
+
+    if (
+        index < 0 ||
+        index >= orders.length
+    ) {
+        return;
+    }
+
+
+    if (
+        !confirm(
+            "Удалить этот заказ?"
+        )
+    ) {
+        return;
+    }
+
+
+    orders.splice(
+        index,
+        1
+    );
+
+
+    localStorage.setItem(
+        "rustOrders",
+        JSON.stringify(
+            orders
+        )
+    );
+
+
+    renderAdminOrders();
+
+    renderOrders();
+
+    updateProfile();
+
+
+    showToast(
+        "Заказ удалён"
+    );
+
+}
+
+
+/* =====================================================
+   CLEAR ORDERS
+===================================================== */
+
+function clearAdminOrders() {
+
+    if (
+        !confirm(
+            "Удалить ВСЮ историю заказов?"
+        )
+    ) {
+        return;
+    }
+
+
+    localStorage.removeItem(
+        "rustOrders"
+    );
+
+
+    renderAdminOrders();
+
+    renderOrders();
+
+    updateProfile();
+
+
+    showToast(
+        "История заказов очищена"
+    );
+
+}
+
+
+/* =====================================================
    MODALS
-========================================= */
+===================================================== */
 
 function openModal(id) {
 
     const modal =
-        document.getElementById(id);
+        document.getElementById(
+            id
+        );
+
 
     if (!modal) {
         return;
     }
 
+
     modal.classList.add(
         "open"
     );
+
 
     document.body.style.overflow =
         "hidden";
@@ -1351,15 +2491,20 @@ function openModal(id) {
 function closeModal(id) {
 
     const modal =
-        document.getElementById(id);
+        document.getElementById(
+            id
+        );
+
 
     if (!modal) {
         return;
     }
 
+
     modal.classList.remove(
         "open"
     );
+
 
     document.body.style.overflow =
         "";
@@ -1367,9 +2512,9 @@ function closeModal(id) {
 }
 
 
-/* =========================================
-   MODAL OUTSIDE CLICK
-========================================= */
+/* =====================================================
+   CLICK OUTSIDE
+===================================================== */
 
 document.addEventListener(
     "click",
@@ -1381,12 +2526,9 @@ document.addEventListener(
             )
         ) {
 
-            event.target.classList.remove(
-                "open"
+            closeModal(
+                event.target.id
             );
-
-            document.body.style.overflow =
-                "";
 
         }
 
@@ -1394,30 +2536,36 @@ document.addEventListener(
 );
 
 
-/* =========================================
+/* =====================================================
    ESC
-========================================= */
+===================================================== */
 
 document.addEventListener(
     "keydown",
     event => {
 
         if (
-            event.key !== "Escape"
+            event.key !==
+            "Escape"
         ) {
             return;
         }
+
 
         document
             .querySelectorAll(
                 ".modal.open"
             )
             .forEach(
-                modal =>
+                modal => {
+
                     modal.classList.remove(
                         "open"
-                    )
+                    );
+
+                }
             );
+
 
         document.body.style.overflow =
             "";
@@ -1426,9 +2574,9 @@ document.addEventListener(
 );
 
 
-/* =========================================
+/* =====================================================
    COPY
-========================================= */
+===================================================== */
 
 function copyOrderNumber() {
 
@@ -1437,13 +2585,15 @@ function copyOrderNumber() {
             "orderNumber"
         );
 
-    if (element) {
 
-        copyText(
-            element.textContent
-        );
-
+    if (!element) {
+        return;
     }
+
+
+    copyText(
+        element.textContent
+    );
 
 }
 
@@ -1455,13 +2605,15 @@ function copySuccessOrder() {
             "successOrderNumber"
         );
 
-    if (element) {
 
-        copyText(
-            element.textContent
-        );
-
+    if (!element) {
+        return;
     }
+
+
+    copyText(
+        element.textContent
+    );
 
 }
 
@@ -1474,44 +2626,65 @@ function copyText(text) {
     ) {
 
         navigator.clipboard
-            .writeText(text)
+            .writeText(
+                text
+            )
             .then(
-                () =>
+                () => {
+
                     showToast(
                         "Скопировано"
-                    )
+                    );
+
+                }
             )
             .catch(
-                () =>
-                    showToast(
-                        "Не удалось скопировать"
-                    )
+                () => {
+
+                    fallbackCopy(
+                        text
+                    );
+
+                }
             );
 
         return;
-
     }
 
+
+    fallbackCopy(
+        text
+    );
+
+}
+
+
+function fallbackCopy(text) {
 
     const textarea =
         document.createElement(
             "textarea"
         );
 
+
     textarea.value =
         text;
+
 
     document.body.appendChild(
         textarea
     );
 
+
     textarea.select();
+
 
     try {
 
         document.execCommand(
             "copy"
         );
+
 
         showToast(
             "Скопировано"
@@ -1525,27 +2698,28 @@ function copyText(text) {
 
     }
 
+
     textarea.remove();
 
 }
 
 
-/* =========================================
+/* =====================================================
    SCROLL
-========================================= */
+===================================================== */
 
-function scrollToSection(
-    id
-) {
+function scrollToSection(id) {
 
     const element =
         document.getElementById(
             id
         );
 
+
     if (!element) {
         return;
     }
+
 
     element.scrollIntoView({
         behavior: "smooth"
@@ -1554,9 +2728,9 @@ function scrollToSection(
 }
 
 
-/* =========================================
-   FORMAT
-========================================= */
+/* =====================================================
+   FORMAT PRICE
+===================================================== */
 
 function formatPrice(
     price
@@ -1571,9 +2745,9 @@ function formatPrice(
 }
 
 
-/* =========================================
-   ESCAPE
-========================================= */
+/* =====================================================
+   ESCAPE HTML
+===================================================== */
 
 function escapeHTML(
     value
@@ -1606,9 +2780,40 @@ function escapeHTML(
 }
 
 
-/* =========================================
+function escapeJS(
+    value
+) {
+
+    return String(
+        value ?? ""
+    )
+        .replace(
+            /\\/g,
+            "\\\\"
+        )
+        .replace(
+            /'/g,
+            "\\'"
+        )
+        .replace(
+            /"/g,
+            '\\"'
+        )
+        .replace(
+            /\n/g,
+            "\\n"
+        )
+        .replace(
+            /\r/g,
+            "\\r"
+        );
+
+}
+
+
+/* =====================================================
    TOAST
-========================================= */
+===================================================== */
 
 function showToast(
     message
@@ -1618,6 +2823,7 @@ function showToast(
         document.querySelector(
             ".toast"
         );
+
 
     if (old) {
         old.remove();
@@ -1629,28 +2835,13 @@ function showToast(
             "div"
         );
 
+
     toast.className =
         "toast";
 
+
     toast.textContent =
         message;
-
-    toast.style.cssText = `
-        position:fixed;
-        left:50%;
-        bottom:25px;
-        transform:translateX(-50%) translateY(20px);
-        z-index:9999;
-        padding:13px 18px;
-        border-radius:12px;
-        background:#171b23;
-        color:#fff;
-        border:1px solid rgba(255,255,255,.1);
-        box-shadow:0 15px 40px rgba(0,0,0,.4);
-        opacity:0;
-        transition:.25s;
-        font-weight:700;
-    `;
 
 
     document.body.appendChild(
@@ -1658,30 +2849,32 @@ function showToast(
     );
 
 
-    requestAnimationFrame(
+    setTimeout(
         () => {
 
-            toast.style.opacity =
-                "1";
+            toast.classList.add(
+                "show"
+            );
 
-            toast.style.transform =
-                "translateX(-50%) translateY(0)";
-
-        }
+        },
+        10
     );
 
 
     setTimeout(
         () => {
 
-            toast.style.opacity =
-                "0";
+            toast.classList.remove(
+                "show"
+            );
 
-            toast.style.transform =
-                "translateX(-50%) translateY(20px)";
 
             setTimeout(
-                () => toast.remove(),
+                () => {
+
+                    toast.remove();
+
+                },
                 250
             );
 
