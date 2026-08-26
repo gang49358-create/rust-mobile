@@ -1,126 +1,54 @@
 <!DOCTYPE html>
 <html lang="ru">
-
 <head>
     <meta charset="UTF-8">
-
-    <meta
-        name="viewport"
-        content="width=device-width, initial-scale=1.0"
-    >
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
     <title>RUST MOBILE SHOP 🇨🇳</title>
 
     <meta
         name="description"
-        content="RUST MOBILE SHOP — пополнение китайского Rust Mobile"
+        content="RUST MOBILE SHOP — пополнение Rust Mobile"
     >
 
-    <link
-        rel="stylesheet"
-        href="style.css"
-    >
+    <link rel="stylesheet" href="style.css">
 </head>
-
 
 <body>
 
-<!-- =========================================
-     BACKGROUND
-========================================= -->
-
 <div class="background"></div>
 
-
-<!-- =========================================
-     HEADER
-========================================= -->
-
+<!-- HEADER -->
 <header class="header">
-
     <div class="header-inner">
 
-        <a
-            href="#"
-            class="logo"
-            onclick="scrollToSection('shop'); return false;"
-        >
-
-            <div class="logo-icon">
-                ⚡
-            </div>
+        <a class="logo" href="#" onclick="scrollToSection('shop')">
+            <div class="logo-icon">⚡</div>
 
             <div>
-
-                <div class="logo-title">
-                    RUST MOBILE
-                </div>
-
-                <div class="logo-subtitle">
-                    SHOP 🇨🇳
-                </div>
-
+                <div class="logo-title">RUST MOBILE</div>
+                <div class="logo-subtitle">SHOP 🇨🇳</div>
             </div>
-
         </a>
 
-
         <nav class="desktop-nav">
-
-            <button
-                type="button"
-                onclick="scrollToSection('shop')"
-            >
-                🛒 Магазин
-            </button>
-
-            <button
-                type="button"
-                onclick="openProfile()"
-            >
-                👤 Профиль
-            </button>
-
-            <button
-                type="button"
-                onclick="openOrders()"
-            >
-                📋 Заказы
-            </button>
-
-            <button
-                type="button"
-                onclick="openSupport()"
-            >
-                💬 Поддержка
-            </button>
-
+            <button onclick="scrollToSection('shop')">🛒 Магазин</button>
+            <button onclick="openProfile()">👤 Профиль</button>
+            <button onclick="openOrders()">📋 Заказы</button>
+            <button onclick="openFAQ()">❓ FAQ</button>
+            <button onclick="openSupport()">💬 Поддержка</button>
         </nav>
 
-
-        <button
-            type="button"
-            class="cart-button"
-            onclick="openCart()"
-        >
-
+        <button class="cart-button" onclick="openCart()">
             🛒
-
-            <span id="cartCount">
-                0
-            </span>
-
+            <span id="cartCount">0</span>
         </button>
 
     </div>
-
 </header>
 
 
-<!-- =========================================
-     HERO
-========================================= -->
-
+<!-- HERO -->
 <main>
 
 <section class="hero">
@@ -131,32 +59,26 @@
             🇨🇳 RUST MOBILE CHINA
         </div>
 
-
         <h1>
             Пополнение
             <span>Rust Mobile</span>
         </h1>
 
-
         <p>
             Монеты, Battle Pass и специальные предложения.
-            Быстрое оформление заказа.
+            Красивое и быстрое оформление заказа.
         </p>
-
 
         <div class="hero-buttons">
 
             <button
-                type="button"
                 class="main-button"
                 onclick="scrollToSection('shop')"
             >
                 🛒 Купить донат
             </button>
 
-
             <button
-                type="button"
                 class="secondary-button"
                 onclick="openSupport()"
             >
@@ -164,7 +86,6 @@
             </button>
 
         </div>
-
 
         <div class="advantages">
 
@@ -187,88 +108,55 @@
 
     </div>
 
-
     <div class="hero-coins">
-
-        <div class="coin coin-big">
-            ✦
-        </div>
-
-        <div class="coin coin-medium">
-            ✦
-        </div>
-
-        <div class="coin coin-small">
-            ✦
-        </div>
-
-        <div class="coin coin-small coin-four">
-            ✦
-        </div>
-
+        <div class="coin coin-big">✦</div>
+        <div class="coin coin-medium">✦</div>
+        <div class="coin coin-small">✦</div>
+        <div class="coin coin-small coin-four">✦</div>
 
         <div class="coin-stack">
-
-            <div class="coin-layer"></div>
-            <div class="coin-layer"></div>
-            <div class="coin-layer"></div>
-            <div class="coin-layer"></div>
-
+            <div></div>
+            <div></div>
+            <div></div>
+            <div></div>
         </div>
-
     </div>
 
 </section>
 
 
-<!-- =========================================
-     SHOP
-========================================= -->
-
-<section
-    class="shop-section"
-    id="shop"
->
+<!-- SHOP -->
+<section class="shop-section" id="shop">
 
     <div class="section-title">
 
-        <span>
-            🛒 МАГАЗИН
-        </span>
+        <span>🛒 МАГАЗИН</span>
 
-        <h2>
-            Выбери категорию
-        </h2>
+        <h2>Выбери категорию</h2>
 
         <p>
-            Выберите нужный товар и добавьте его в корзину.
+            Выберите товар и добавьте его в корзину.
         </p>
 
     </div>
 
-
     <div class="categories">
 
         <button
-            type="button"
             class="category active"
             onclick="showCategory('coins', this)"
         >
             🪙 Монеты
         </button>
 
-
         <button
-            type="button"
             class="category"
             onclick="showCategory('battlepass', this)"
         >
             🏅 Battle Pass
         </button>
 
-
         <button
-            type="button"
             class="category"
             onclick="showCategory('promotions', this)"
         >
@@ -276,7 +164,6 @@
         </button>
 
     </div>
-
 
     <div
         class="products"
@@ -286,62 +173,141 @@
 </section>
 
 
-<!-- =========================================
-     INFO
-========================================= -->
+<!-- FEATURES -->
+<section class="features-section">
 
+    <div class="feature-card">
+        <div class="feature-icon">⚡</div>
+        <h3>Быстрое оформление</h3>
+        <p>
+            Выбираете товар, оформляете заказ
+            и переходите к продавцу.
+        </p>
+    </div>
+
+    <div class="feature-card">
+        <div class="feature-icon">🧾</div>
+        <h3>Номер заказа</h3>
+        <p>
+            Каждый заказ получает уникальный номер.
+        </p>
+    </div>
+
+    <div class="feature-card">
+        <div class="feature-icon">📱</div>
+        <h3>Telegram</h3>
+        <p>
+            После оформления можно сразу связаться
+            с продавцом.
+        </p>
+    </div>
+
+</section>
+
+
+<!-- PROMO -->
+<section class="promo-section">
+
+    <div class="promo-card">
+
+        <div>
+            <span class="promo-label">🔥 СПЕЦИАЛЬНОЕ ПРЕДЛОЖЕНИЕ</span>
+
+            <h2>Скидки на популярные наборы</h2>
+
+            <p>
+                Успей воспользоваться акционными товарами.
+            </p>
+        </div>
+
+        <button
+            class="main-button"
+            onclick="showCategory('promotions', document.querySelectorAll('.category')[2]); scrollToSection('shop')"
+        >
+            🔥 Смотреть акции
+        </button>
+
+    </div>
+
+</section>
+
+
+<!-- INFO -->
 <section class="info-section">
 
     <div class="info-card">
+        <div class="info-icon">🛒</div>
 
-        <div class="info-icon">
-            🎮
-        </div>
-
-        <h3>
-            Как купить?
-        </h3>
+        <h3>1. Выберите товар</h3>
 
         <p>
-            Выберите товар, добавьте его в корзину,
-            укажите Почту / WeChat ID и создайте заказ.
+            Добавьте нужные товары в корзину.
         </p>
-
     </div>
 
-
     <div class="info-card">
+        <div class="info-icon">🧾</div>
 
-        <div class="info-icon">
-            ⚡
-        </div>
-
-        <h3>
-            Быстрое оформление
-        </h3>
+        <h3>2. Создайте заказ</h3>
 
         <p>
-            После создания заказа вы получите
-            уникальный номер заказа.
+            Укажите почту или WeChat ID и способ оплаты.
         </p>
-
     </div>
 
-
     <div class="info-card">
+        <div class="info-icon">💬</div>
 
-        <div class="info-icon">
-            💬
-        </div>
-
-        <h3>
-            Поддержка
-        </h3>
+        <h3>3. Свяжитесь с продавцом</h3>
 
         <p>
-            Если возникла проблема — свяжитесь
-            с нашей поддержкой.
+            После оформления откроется Telegram.
         </p>
+    </div>
+
+</section>
+
+
+<!-- FAQ -->
+<section class="faq-section" id="faq">
+
+    <div class="section-title">
+        <span>❓ FAQ</span>
+        <h2>Частые вопросы</h2>
+    </div>
+
+    <div class="faq-list">
+
+        <details>
+            <summary>Как оформить заказ?</summary>
+            <p>
+                Выберите товар, добавьте его в корзину,
+                заполните контакт и создайте заказ.
+            </p>
+        </details>
+
+        <details>
+            <summary>Где посмотреть номер заказа?</summary>
+            <p>
+                Номер появляется после оформления заказа
+                и сохраняется в разделе «Заказы».
+            </p>
+        </details>
+
+        <details>
+            <summary>Как связаться с продавцом?</summary>
+            <p>
+                После создания заказа можно открыть Telegram
+                продавца с готовым текстом заказа.
+            </p>
+        </details>
+
+        <details>
+            <summary>Можно ли посмотреть старые заказы?</summary>
+            <p>
+                Да. Откройте раздел «Профиль» → «Мои заказы».
+            </p>
+        </details>
 
     </div>
 
@@ -350,10 +316,7 @@
 </main>
 
 
-<!-- =========================================
-     FOOTER
-========================================= -->
-
+<!-- FOOTER -->
 <footer>
 
     <div class="footer-logo">
@@ -364,52 +327,39 @@
         © 2026 RUST MOBILE SHOP
     </p>
 
-    <button
-        type="button"
-        onclick="openSupport()"
-    >
+    <button onclick="openSupport()">
         💬 Написать в поддержку
     </button>
+
+    <div class="created-by">
+        Создал сайт <strong>AkashiSK8</strong>
+    </div>
 
 </footer>
 
 
-<!-- =========================================
-     CART MODAL
-========================================= -->
-
-<div
-    class="modal"
-    id="cartModal"
->
+<!-- CART -->
+<div class="modal" id="cartModal">
 
     <div class="modal-box">
 
         <button
-            type="button"
             class="modal-close"
             onclick="closeModal('cartModal')"
         >
             ×
         </button>
 
-
-        <h2>
-            🛒 Корзина
-        </h2>
-
+        <h2>🛒 Корзина</h2>
 
         <div
             id="cartItems"
             class="cart-items"
         ></div>
 
-
         <div class="cart-total">
 
-            <span>
-                Итого
-            </span>
+            <span>Итого</span>
 
             <strong id="cartTotal">
                 0 ₽
@@ -417,9 +367,7 @@
 
         </div>
 
-
         <button
-            type="button"
             class="main-button full"
             onclick="checkout()"
         >
@@ -431,68 +379,44 @@
 </div>
 
 
-<!-- =========================================
-     CHECKOUT MODAL
-========================================= -->
-
-<div
-    class="modal"
-    id="checkoutModal"
->
+<!-- CHECKOUT -->
+<div class="modal" id="checkoutModal">
 
     <div class="modal-box checkout-box">
 
         <button
-            type="button"
             class="modal-close"
             onclick="closeModal('checkoutModal')"
         >
             ×
         </button>
 
-
         <div class="checkout-header">
 
-            <div class="checkout-icon">
-                🧾
-            </div>
+            <div class="checkout-icon">🧾</div>
 
             <div>
-
-                <h2>
-                    Оформление заказа
-                </h2>
+                <h2>Оформление заказа</h2>
 
                 <p>
                     Проверьте данные перед созданием заказа
                 </p>
-
             </div>
 
         </div>
 
 
-        <!-- ORDER NUMBER -->
-
         <div class="order-number-box">
 
             <div>
-
-                <span>
-                    Номер заказа
-                </span>
+                <span>Номер заказа</span>
 
                 <strong id="orderNumber">
                     RM-00000000-000000
                 </strong>
-
             </div>
 
-
-            <button
-                type="button"
-                onclick="copyOrderNumber()"
-            >
+            <button onclick="copyOrderNumber()">
                 📋
             </button>
 
@@ -500,63 +424,26 @@
 
 
         <!-- CONTACT -->
-
         <div class="checkout-field">
 
-            <label for="checkoutPlayerId">
+            <label for="checkoutContact">
                 📧 Почта / WeChat ID
             </label>
 
             <input
-                id="checkoutPlayerId"
+                id="checkoutContact"
                 type="text"
                 placeholder="Введите почту или WeChat ID"
-                autocomplete="email"
-                maxlength="150"
+                autocomplete="off"
             >
 
         </div>
 
 
-        <!-- SECURITY NOTICE -->
-
-        <div class="security-notice">
-
-            🔒
-            <span>
-                Не вводите пароль WeChat или пароль от другого
-                аккаунта на этом сайте. Для оформления достаточно
-                идентификатора аккаунта.
-            </span>
-
-        </div>
-
-
-        <!-- COMMENT -->
-
-        <div class="checkout-field">
-
-            <label for="checkoutComment">
-                📝 Комментарий
-            </label>
-
-            <textarea
-                id="checkoutComment"
-                rows="3"
-                maxlength="500"
-                placeholder="Дополнительная информация к заказу"
-            ></textarea>
-
-        </div>
-
-
-        <!-- PRODUCTS -->
-
+        <!-- ITEMS -->
         <div class="checkout-products">
 
-            <h3>
-                Ваш заказ
-            </h3>
+            <h3>Ваш заказ</h3>
 
             <div id="checkoutItems"></div>
 
@@ -564,12 +451,9 @@
 
 
         <!-- TOTAL -->
-
         <div class="checkout-total">
 
-            <span>
-                К оплате
-            </span>
+            <span>К оплате</span>
 
             <strong id="checkoutTotal">
                 0 ₽
@@ -579,13 +463,11 @@
 
 
         <!-- PAYMENT -->
-
         <div class="checkout-field">
 
             <label for="paymentMethod">
                 💳 Способ оплаты
             </label>
-
 
             <select id="paymentMethod">
 
@@ -607,7 +489,6 @@
 
 
         <!-- AGREEMENT -->
-
         <label class="agreement">
 
             <input
@@ -616,7 +497,7 @@
             >
 
             <span>
-                Я проверил данные аккаунта и согласен
+                Я проверил указанные данные и согласен
                 с условиями заказа.
             </span>
 
@@ -624,11 +505,10 @@
 
 
         <button
-            type="button"
             class="main-button full"
             onclick="createOrder()"
         >
-            🔒 Создать заказ
+            🚀 Создать заказ
         </button>
 
     </div>
@@ -636,14 +516,8 @@
 </div>
 
 
-<!-- =========================================
-     SUCCESS MODAL
-========================================= -->
-
-<div
-    class="modal"
-    id="successModal"
->
+<!-- SUCCESS -->
+<div class="modal" id="successModal">
 
     <div class="modal-box success-box">
 
@@ -651,87 +525,57 @@
             ✓
         </div>
 
-
-        <h2>
-            Заказ создан!
-        </h2>
-
+        <h2>Заказ создан!</h2>
 
         <p>
-            Проверьте Telegram — откроется чат
-            с продавцом и готовый текст заказа.
+            Сохраните номер заказа.
         </p>
-
 
         <div class="success-order">
 
-            <span>
-                Номер заказа
-            </span>
+            <span>Номер заказа</span>
 
             <strong id="successOrderNumber">
-                RM-00000000-000000
+                —
             </strong>
 
         </div>
 
-
         <div class="success-info">
 
             <div>
+                <span>📧 Контакт</span>
 
-                <span>
-                    📧 Почта / WeChat ID
-                </span>
-
-                <strong id="successPlayerId">
+                <strong id="successContact">
                     —
                 </strong>
-
             </div>
 
-
             <div>
-
-                <span>
-                    💰 Сумма
-                </span>
+                <span>💰 Сумма</span>
 
                 <strong id="successTotal">
                     0 ₽
                 </strong>
-
             </div>
 
         </div>
 
-
-        <p class="telegram-status">
-            📱 Готовый заказ можно отправить продавцу
-            в Telegram.
-        </p>
-
-
         <button
-            type="button"
             class="main-button full"
             onclick="openLastTelegramOrder()"
         >
-            ✈️ Открыть Telegram
+            📱 Открыть Telegram
         </button>
 
-
         <button
-            type="button"
             class="secondary-button full"
             onclick="copySuccessOrder()"
         >
             📋 Скопировать номер
         </button>
 
-
         <button
-            type="button"
             class="secondary-button full"
             onclick="closeModal('successModal')"
         >
@@ -743,109 +587,60 @@
 </div>
 
 
-<!-- =========================================
-     PROFILE MODAL
-========================================= -->
-
-<div
-    class="modal"
-    id="profileModal"
->
+<!-- PROFILE -->
+<div class="modal" id="profileModal">
 
     <div class="modal-box">
 
         <button
-            type="button"
             class="modal-close"
             onclick="closeModal('profileModal')"
         >
             ×
         </button>
 
-
         <div class="profile-avatar">
             👤
         </div>
 
-
-        <h2>
-            Мой профиль
-        </h2>
-
-
-        <p>
-            Данные сохраняются только в браузере
-            этого устройства.
-        </p>
-
+        <h2>Твой профиль</h2>
 
         <div class="profile-card">
 
             <div>
+                📧
+                <span>Контакт</span>
 
-                <span>
-                    📧 Почта / WeChat ID
-                </span>
-
-                <strong id="profileId">
+                <strong id="profileContact">
                     Не указан
                 </strong>
-
             </div>
 
-
             <div>
-
-                <span>
-                    📦 Всего заказов
-                </span>
+                📦
+                <span>Всего заказов</span>
 
                 <strong id="profileOrders">
                     0
                 </strong>
-
             </div>
 
-
             <div>
-
-                <span>
-                    💰 Потрачено
-                </span>
+                💰
+                <span>Потрачено</span>
 
                 <strong id="profileSpent">
                     0 ₽
                 </strong>
-
             </div>
 
         </div>
 
-
         <button
-            type="button"
             class="main-button full"
             onclick="openOrders()"
         >
             📋 Мои заказы
-        </button>
-
-
-        <button
-            type="button"
-            class="secondary-button full"
-            onclick="openSupport()"
-        >
-            💬 Поддержка
-        </button>
-
-
-        <button
-            type="button"
-            class="secondary-button full"
-            onclick="openAdminLogin()"
-        >
-            👑 Вход администратора
         </button>
 
     </div>
@@ -853,30 +648,19 @@
 </div>
 
 
-<!-- =========================================
-     ORDERS MODAL
-========================================= -->
-
-<div
-    class="modal"
-    id="ordersModal"
->
+<!-- ORDERS -->
+<div class="modal" id="ordersModal">
 
     <div class="modal-box orders-box">
 
         <button
-            type="button"
             class="modal-close"
             onclick="closeModal('ordersModal')"
         >
             ×
         </button>
 
-
-        <h2>
-            📋 Мои заказы
-        </h2>
-
+        <h2>📋 Мои заказы</h2>
 
         <div
             id="ordersList"
@@ -888,85 +672,54 @@
 </div>
 
 
-<!-- =========================================
-     SUPPORT MODAL
-========================================= -->
-
-<div
-    class="modal"
-    id="supportModal"
->
+<!-- SUPPORT -->
+<div class="modal" id="supportModal">
 
     <div class="modal-box">
 
         <button
-            type="button"
             class="modal-close"
             onclick="closeModal('supportModal')"
         >
             ×
         </button>
 
-
         <div class="support-icon">
             💬
         </div>
 
-
-        <h2>
-            Поддержка
-        </h2>
-
+        <h2>Поддержка</h2>
 
         <p class="support-text">
             По всем вопросам обращайтесь
             к нашей поддержке.
         </p>
 
-
         <div class="support-card">
-
-            <span>
-                👤 Поддержка
-            </span>
+            <span>👤 Поддержка</span>
 
             <a
                 href="https://t.me/luxanixx"
                 target="_blank"
-                rel="noopener noreferrer"
             >
                 @luxanixx
             </a>
-
         </div>
 
-
         <div class="support-card">
-
-            <span>
-                ⏱ Время ответа
-            </span>
+            <span>⏱ Время ответа</span>
 
             <strong>
                 до 20 минут
             </strong>
-
         </div>
-
-
-        <p class="support-hint">
-            Если проблема связана с заказом,
-            обязательно укажите его номер.
-        </p>
-
 
         <a
             class="main-button full support-link"
             href="https://t.me/luxanixx"
             target="_blank"
-            rel="noopener noreferrer"
         >
-            ✉️ Написать
+            ✉️ Написать продавцу
         </a>
 
     </div>
@@ -974,246 +727,8 @@
 </div>
 
 
-<!-- =========================================
-     ADMIN LOGIN
-========================================= -->
-
-<div
-    class="modal"
-    id="adminLoginModal"
->
-
-    <div class="modal-box">
-
-        <button
-            type="button"
-            class="modal-close"
-            onclick="closeModal('adminLoginModal')"
-        >
-            ×
-        </button>
-
-
-        <div class="profile-avatar">
-            👑
-        </div>
-
-
-        <h2>
-            Вход администратора
-        </h2>
-
-
-        <p>
-            Панель администратора
-        </p>
-
-
-        <div class="checkout-field">
-
-            <label for="adminLogin">
-                👤 Логин
-            </label>
-
-            <input
-                id="adminLogin"
-                type="text"
-                placeholder="Введите логин"
-                autocomplete="username"
-            >
-
-        </div>
-
-
-        <div class="checkout-field">
-
-            <label for="adminPassword">
-                🔒 Пароль
-            </label>
-
-            <input
-                id="adminPassword"
-                type="password"
-                placeholder="Введите пароль"
-                autocomplete="current-password"
-            >
-
-        </div>
-
-
-        <div
-            id="adminLoginError"
-            class="admin-login-error"
-        ></div>
-
-
-        <button
-            type="button"
-            class="main-button full"
-            onclick="loginAdmin()"
-        >
-            🔐 Войти
-        </button>
-
-    </div>
-
-</div>
-
-
-<!-- =========================================
-     ADMIN PANEL
-========================================= -->
-
-<div
-    class="modal"
-    id="adminModal"
->
-
-    <div class="admin-panel">
-
-        <button
-            type="button"
-            class="admin-close"
-            onclick="closeModal('adminModal')"
-        >
-            ×
-        </button>
-
-
-        <div class="admin-header">
-
-            <div class="admin-avatar">
-                A
-            </div>
-
-
-            <div>
-
-                <div class="admin-title">
-                    AkashiSK8
-                </div>
-
-                <div class="admin-subtitle">
-                    Панель администратора
-                </div>
-
-            </div>
-
-        </div>
-
-
-        <!-- ADMIN STATS -->
-
-        <div class="admin-stats">
-
-            <div class="admin-stat">
-
-                <span>
-                    📦 Всего
-                </span>
-
-                <strong id="adminTotalOrders">
-                    0
-                </strong>
-
-            </div>
-
-
-            <div class="admin-stat">
-
-                <span>
-                    🆕 Новые
-                </span>
-
-                <strong id="adminNewOrders">
-                    0
-                </strong>
-
-            </div>
-
-
-            <div class="admin-stat">
-
-                <span>
-                    💳 Оплата
-                </span>
-
-                <strong id="adminWaitingOrders">
-                    0
-                </strong>
-
-            </div>
-
-
-            <div class="admin-stat">
-
-                <span>
-                    ✅ Выполнены
-                </span>
-
-                <strong id="adminCompletedOrders">
-                    0
-                </strong>
-
-            </div>
-
-        </div>
-
-
-        <!-- ADMIN ORDERS HEADER -->
-
-        <div class="admin-orders-header">
-
-            <h3>
-                Заказы
-            </h3>
-
-
-            <button
-                type="button"
-                onclick="refreshAdminOrders()"
-            >
-                🔄 Обновить
-            </button>
-
-        </div>
-
-
-        <!-- ADMIN ORDERS -->
-
-        <div
-            id="adminOrdersList"
-            class="admin-orders-list"
-        >
-
-            <div class="admin-empty">
-                Заказов пока нет
-            </div>
-
-        </div>
-
-
-        <!-- CLEAR -->
-
-        <button
-            type="button"
-            class="admin-clear-button"
-            onclick="clearAdminOrders()"
-        >
-            🗑 Очистить историю заказов
-        </button>
-
-    </div>
-
-</div>
-
-
-<!-- =========================================
-     SCRIPT
-========================================= -->
-
+<!-- SCRIPT -->
 <script src="script.js"></script>
-
 
 </body>
 </html>
