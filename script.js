@@ -1453,6 +1453,98 @@ function showToast(message) {
     if (old) {
         old.remove();
     }
+    /* =========================================
+   ADMIN LOGIN
+========================================= */
+
+function openAdminLogin() {
+
+    closeModal("profileModal");
+
+    const login =
+        document.getElementById(
+            "adminLogin"
+        );
+
+    const password =
+        document.getElementById(
+            "adminPassword"
+        );
+
+    const error =
+        document.getElementById(
+            "adminLoginError"
+        );
+
+    if (login) {
+        login.value = "";
+    }
+
+    if (password) {
+        password.value = "";
+    }
+
+    if (error) {
+        error.textContent = "";
+    }
+
+    openModal("adminLoginModal");
+}
+
+
+function loginAdmin() {
+
+    const login =
+        document
+            .getElementById("adminLogin")
+            .value
+            .trim();
+
+    const password =
+        document
+            .getElementById("adminPassword")
+            .value;
+
+    const error =
+        document.getElementById(
+            "adminLoginError"
+        );
+
+
+    /*
+       ВРЕМЕННЫЕ ДАННЫЕ ДЛЯ ТЕСТА
+    */
+
+    const correctLogin =
+        "AkashiSK8";
+
+    const correctPassword =
+        "CHANGE_ME";
+
+
+    if (
+        login !== correctLogin ||
+        password !== correctPassword
+    ) {
+
+        if (error) {
+
+            error.textContent =
+                "Неверный логин или пароль";
+
+        }
+
+        return;
+    }
+
+
+    closeModal(
+        "adminLoginModal"
+    );
+
+
+    openAdminPanel();
+}
 
 
     const toast =
