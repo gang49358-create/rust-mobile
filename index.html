@@ -1255,7 +1255,161 @@
 
 </div>
 
+<!-- =========================================
+     REVIEWS
+========================================= -->
 
+<section class="reviews-section" id="reviews">
+
+    <div class="section-title">
+
+        <span>⭐ ОТЗЫВЫ</span>
+
+        <h2>Отзывы покупателей</h2>
+
+        <p>
+            Поделитесь впечатлением после покупки.
+        </p>
+
+    </div>
+
+    <div id="reviewsList" class="reviews-list"></div>
+
+    <div class="reviews-empty" id="reviewsEmpty">
+        ⭐ Пока отзывов нет.
+        <br>
+        Будьте первым!
+    </div>
+
+</section>
+
+
+<!-- =========================================
+     REVIEW MODAL
+========================================= -->
+
+<div class="modal" id="reviewModal">
+
+    <div class="modal-box review-box">
+
+        <button
+            type="button"
+            class="modal-close"
+            onclick="closeModal('reviewModal')"
+        >
+            ×
+        </button>
+
+        <div class="review-icon">
+            ⭐
+        </div>
+
+        <h2>
+            Оставить отзыв
+        </h2>
+
+        <p class="review-order">
+            Заказ:
+            <strong id="reviewOrderNumber">
+                —
+            </strong>
+        </p>
+
+
+        <div class="review-rating">
+
+            <button
+                type="button"
+                data-rating="1"
+                onclick="selectRating(1)"
+            >
+                ★
+            </button>
+
+            <button
+                type="button"
+                data-rating="2"
+                onclick="selectRating(2)"
+            >
+                ★
+            </button>
+
+            <button
+                type="button"
+                data-rating="3"
+                onclick="selectRating(3)"
+            >
+                ★
+            </button>
+
+            <button
+                type="button"
+                data-rating="4"
+                onclick="selectRating(4)"
+            >
+                ★
+            </button>
+
+            <button
+                type="button"
+                data-rating="5"
+                onclick="selectRating(5)"
+            >
+                ★
+            </button>
+
+        </div>
+
+
+        <div class="review-rating-text" id="reviewRatingText">
+            Выберите оценку
+        </div>
+
+
+        <div class="checkout-field">
+
+            <label for="reviewName">
+                👤 Ваше имя
+            </label>
+
+            <input
+                id="reviewName"
+                type="text"
+                maxlength="40"
+                placeholder="Например: Alex"
+                autocomplete="off"
+            >
+
+        </div>
+
+
+        <div class="checkout-field">
+
+            <label for="reviewText">
+                💬 Ваш отзыв
+            </label>
+
+            <textarea
+                id="reviewText"
+                rows="5"
+                maxlength="500"
+                placeholder="Напишите, как прошла покупка..."
+            ></textarea>
+
+        </div>
+
+
+        <button
+            type="button"
+            class="main-button full"
+            onclick="submitReview()"
+        >
+            ⭐ Опубликовать отзыв
+        </button>
+
+    </div>
+
+</div>
 <script src="script.js"></script>
 
 </body>
